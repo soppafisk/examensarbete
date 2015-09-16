@@ -6,15 +6,9 @@ var mongoose = require('mongoose');
 
 var app = express();
 
-<<<<<<< HEAD
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/plnk');
-
-=======
 app.use(express.static(__dirname + "/public"));
 
 app.use('/vendor', express.static(__dirname + '/node_modules'));
->>>>>>> bf04c0286736d629c1cc028c90e452250ef135ea
 
 app.get('/', function (req, res) {
 

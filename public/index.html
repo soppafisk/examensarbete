@@ -20,12 +20,20 @@
           {{ module.type }}
           {{ module.content }}
         </div>
-        <button class="btn btn-default add-module" ng-click="toggleAddModule()">Lägg till modul</button>
-        <div ng-show="showAddModule">
-          <form action="" novalidate>
-            Text: <input type="text" ng-model="textContent">
-            <button ng-click="addModule()" type="button">Lägg till</button>
-          </form>
+        <div class="col-xs-4">
+          <button class="btn btn-default add-module" ng-click="toggleAddModule()">Lägg till modul</button>
+          <div ng-show="showAddModule">
+            <form action="" novalidate>
+              <label for="moduleType"></label>
+              <select class="" name="moduleType" ng-model="newModule.moduleType">
+                <option value="text" selected>Text</option>
+                <option value="youtube">Youtube</option>
+              </select>
+              <type-input moduletype="newModule.moduleType || 'text'"></type-input>
+              Text: <input type="text" ng-model="newModule.textContent">
+              <button ng-click="addModule()" type="button">Lägg till</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

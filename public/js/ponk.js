@@ -13,19 +13,44 @@ ponk.controller("AppCtrl", ["$scope", function($scope) {
     }
     ];
     $scope.showAddModule = false;
+    $scope.newModule = {
+      type: null,
+      content: ""
+    }
 
   $scope.toggleAddModule = function () {
            $scope.showAddModule = !$scope.showAddModule;
   };
 
   $scope.addModule = function() {
-    var newModule = {
-      type: "text",
-      content: $scope.textContent
+    $scope.newModule = {
+      type: $scope.newModule.moduleType,
+      content: $scope.newModule.textContent
     }
-    console.log(newModule);
-    $scope.modules.push(newModule);
+    $scope.modules.push($scope.newModule);
     $scope.textContent = "";
-
+    $scope.showAddModule = false;
   }
 }]);
+
+ponk.directive("typeInput", function($compile){
+
+  var test = function($scope){
+    console.log($scope.newModule.moduletype);
+  }
+
+  return {
+    restrict: 'E',
+    scope: {
+      moduletype: "=",
+    },
+    template: "<textarea> {{ moduletype }}</textarea>",
+    controller: function($scope) {
+      console.log($scope.moduletype);
+      test();
+    }
+
+  }
+
+
+  });

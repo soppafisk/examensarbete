@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="vendor/angular/angular.min.js"></script>
+  <title>Ponk</title>
+</head>
+<body >
+  <div class="container-fluid" ng-app="ponk" ng-controller="AppCtrl">
+    <div class="row">
+      <div class="col-xs-12 navbar banner">
+        <span class="logo">Ponk</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <div ng-repeat="module in modules" class="module col-xs-2">
+          {{ module.type }}
+          {{ module.content }}
+        </div>
+        <button class="btn btn-default add-module" ng-click="toggleAddModule()">Lägg till modul</button>
+        <div ng-show="showAddModule">
+          <form action="" novalidate>
+            Text: <input type="text" ng-model="textContent">
+            <button ng-click="addModule()" type="button">Lägg till</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="js/ponk.js"></script>
+</body>
+</html>

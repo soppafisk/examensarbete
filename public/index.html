@@ -25,13 +25,21 @@
           <div ng-show="showAddModule">
             <form action="" novalidate>
               <label for="moduleType"></label>
-              <select class="" name="moduleType" ng-model="newModule.moduleType">
+              <select class="" name="moduleType" ng-model="newModule.type">
                 <option value="text" selected>Text</option>
                 <option value="youtube">Youtube</option>
               </select>
-              <type-input moduletype="newModule.moduleType || 'text'"></type-input>
-              Text: <input type="text" ng-model="newModule.textContent">
-              <button ng-click="addModule()" type="button">Lägg till</button>
+              <div ng-switch="newModule.type">
+
+                <div ng-switch-when="youtube">
+                  Youtube: <input type="text" ng-model="newModule.content">
+                </div>
+                <div ng-switch-when="text">
+                  Text: <textarea ng-model="newModule.content"></textarea>
+                </div>
+
+              </div>
+              <button ng-click="addModule()" type="button" class="btn btn-default">Lägg till</button>
             </form>
           </div>
         </div>

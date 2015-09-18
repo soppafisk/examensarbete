@@ -14,7 +14,7 @@ ponk.controller("AppCtrl", ["$scope", function($scope) {
     ];
     $scope.showAddModule = false;
     $scope.newModule = {
-      type: null,
+      type: "text",
       content: ""
     }
 
@@ -23,34 +23,8 @@ ponk.controller("AppCtrl", ["$scope", function($scope) {
   };
 
   $scope.addModule = function() {
-    $scope.newModule = {
-      type: $scope.newModule.moduleType,
-      content: $scope.newModule.textContent
-    }
     $scope.modules.push($scope.newModule);
-    $scope.textContent = "";
+    $scope.newModule = { type: "text", };
     $scope.showAddModule = false;
   }
 }]);
-
-ponk.directive("typeInput", function($compile){
-
-  var test = function($scope){
-    console.log($scope.newModule.moduletype);
-  }
-
-  return {
-    restrict: 'E',
-    scope: {
-      moduletype: "=",
-    },
-    template: "<textarea> {{ moduletype }}</textarea>",
-    controller: function($scope) {
-      console.log($scope.moduletype);
-      test();
-    }
-
-  }
-
-
-  });

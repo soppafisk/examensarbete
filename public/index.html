@@ -15,34 +15,41 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-xs-12">
-        <div ng-repeat="module in modules" class="module col-xs-2">
-          {{ module.type }}
-          {{ module.content }}
-        </div>
-        <div class="col-xs-4">
+      <div class="col-xs-2">
+
           <button class="btn btn-default add-module" ng-click="toggleAddModule()">Lägg till modul</button>
           <div ng-show="showAddModule">
             <form action="" novalidate>
-              <label for="moduleType"></label>
-              <select class="" name="moduleType" ng-model="newModule.type">
-                <option value="text" selected>Text</option>
-                <option value="youtube">Youtube</option>
-              </select>
+              <div class="form-group">
+                <label for="moduleType"></label>
+                <select class="form-control" name="moduleType" ng-model="newModule.type">
+                  <option value="text" selected>Text</option>
+                  <option value="youtube">Youtube</option>
+                </select>
+              </div>
+
               <div ng-switch="newModule.type">
 
-                <div ng-switch-when="youtube">
-                  Youtube: <input type="text" ng-model="newModule.content">
+                <div ng-switch-when="youtube" class="form-group">
+                  <label for="youtube">Youtube</label>
+                  <input type="text" name="youtube" ng-model="newModule.content" class="form-control">
                 </div>
-                <div ng-switch-when="text">
-                  Text: <textarea ng-model="newModule.content"></textarea>
+                <div ng-switch-when="text" class="form-group">
+                  <label for="formText">Text</label>
+                  <textarea ng-model="newModule.content" name="formText" class="form-control"></textarea>
                 </div>
 
               </div>
               <button ng-click="addModule()" type="button" class="btn btn-default">Lägg till</button>
             </form>
           </div>
-        </div>
+      </div>
+      <div class="col-xs-10">
+        <module ng-repeat="module in modules" class="col-xs-2">
+
+
+        </module>
+
       </div>
     </div>
 

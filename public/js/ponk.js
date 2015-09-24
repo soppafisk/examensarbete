@@ -23,6 +23,7 @@ ponk.controller("AppCtrl", ["$scope", function($scope) {
 
   $scope.toggleAddModule = function () {
            $scope.showAddModule = !$scope.showAddModule;
+           console.log($scope.modules);
   };
 
   $scope.addModule = function() {
@@ -32,14 +33,14 @@ ponk.controller("AppCtrl", ["$scope", function($scope) {
   };
 
   $scope.deleteModule = function(module) {
-      var index = $scope.modules.indexOf(module);
+      var index = $scope.$parent.modules.indexOf(module);
       if(index != -1) {
-        $scope.modules.splice(index);
-        console.log("splice");
+        $scope.$parent.modules.splice(index, 1);
+        console.log(index);
       } else {
         console.log("nosplice");
       }
-      console.log($scope.modules);
+      console.log($scope.$parent.modules);
   };
 
 }]);
@@ -70,7 +71,7 @@ ponk.directive("module", function($compile) {
   }
 
   return {
-    scope: {module: '=',},
+    scope: true,
     transclude: 'true',
     controller: 'AppCtrl',
     restrict: 'E',

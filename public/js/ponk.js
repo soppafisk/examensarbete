@@ -1,45 +1,42 @@
 var ponk = angular.module("ponk", []);
 
 ponk.controller("AppCtrl", ["$scope", function($scope) {
+  var pk = this;
 
   //dummy data
-  $scope.modules = [
+  pk.modules = [
     {
       type: "text",
       content: "this is a text field"
     },
     {
       type: "youtube",
-      content: "adress to youtubevideo"
+      content: "address to youtubevideo"
     }
     ];
 
-    $scope.showAddModule = false;
+    pk.showAddModule = false;
 
-    $scope.newModule = {
+    pk.newModule = {
       type: "text",
       content: ""
     }
 
-  $scope.toggleAddModule = function () {
-           $scope.showAddModule = !$scope.showAddModule;
+  pk.toggleAddModule = function () {
+           pk.showAddModule = !pk.showAddModule;
   };
 
-  $scope.addModule = function() {
-      $scope.modules.push($scope.newModule);
-      $scope.newModule = { type: "text", };
-      $scope.showAddModule = false;
+  pk.addModule = function() {
+      pk.modules.push(pk.newModule);
+      pk.newModule = { type: "text", };
+      pk.showAddModule = false;
   };
 
-  $scope.deleteModule = function(module) {
-      var index = $scope.$parent.modules.indexOf(module);
+  pk.deleteModule = function(module) {
+      var index = pk.modules.indexOf(module);
       if(index != -1) {
-        // $scope.$parent.modules.splice(index, 1);
-        console.log(index);
-      } else {
-        console.log("nosplice");
+        pk.modules.splice(index, 1);
       }
-      console.log($scope.$parent.modules);
   };
 
 }]);
@@ -67,10 +64,13 @@ ponk.directive("module", function($compile) {
   var linker = function(scope, element, attrs) {
     var el = $compile(getTemplate(scope.module.type))(scope);
     element.replaceWith(el);
+    scope.deleteModule = function(m){
+      scope.removeFn({module:m});
+    }
   }
 
   return {
-    scope: true,
+    scope: {module: '=', removeFn:'&'},
     transclude: 'true',
     controller: 'AppCtrl',
     restrict: 'E',

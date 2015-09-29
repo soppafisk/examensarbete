@@ -23,7 +23,6 @@ ponk.controller("AppCtrl", ["$scope", function($scope) {
 
   $scope.toggleAddModule = function () {
            $scope.showAddModule = !$scope.showAddModule;
-           console.log($scope.modules);
   };
 
   $scope.addModule = function() {
@@ -35,7 +34,7 @@ ponk.controller("AppCtrl", ["$scope", function($scope) {
   $scope.deleteModule = function(module) {
       var index = $scope.$parent.modules.indexOf(module);
       if(index != -1) {
-        $scope.$parent.modules.splice(index, 1);
+        // $scope.$parent.modules.splice(index, 1);
         console.log(index);
       } else {
         console.log("nosplice");

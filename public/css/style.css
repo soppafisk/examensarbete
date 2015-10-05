@@ -5,11 +5,19 @@
 }
 
 .module {
-  background: #eee;
+  background: #ddd;
   height: 300px;
   white-space: pre-wrap;
 }
 
 .pointer {
   cursor: pointer;
+}
+
+.board-bg {
+  background: #FFF;
+}
+
+.white {
+  background: #FFF;
 }

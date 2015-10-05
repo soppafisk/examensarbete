@@ -22,13 +22,13 @@
             <form action="" novalidate>
               <div class="form-group">
                 <label for="moduleType"></label>
-                <select class="form-control" name="moduleType" ng-model="pk.newModule.type">
+                <select class="form-control" name="moduleType" ng-model="pk.newModule.wType">
                   <option value="text" selected>Text</option>
                   <option value="youtube">Youtube</option>
                 </select>
               </div>
 
-              <div ng-switch="pk.newModule.type">
+              <div ng-switch="pk.newModule.wType">
 
                 <div ng-switch-when="youtube" class="form-group">
                   <label for="youtube">Youtube</label>
@@ -45,8 +45,8 @@
           </div>
       </div>
       <div class="col-xs-10">
-        <div ng-repeat="m in pk.modules">
-          <module  remove-fn="pk.deleteModule(module)" module="m"></module>
+        <div ng-repeat="w in pk.board.widgets">
+          <module  remove-fn="pk.deleteModule(widget)" widget="w"></module>
         </div>
       </div>
     </div>

@@ -1,23 +1,15 @@
-.navbar {
+ull.navbar {
   background: #D1C4E9;
   -webkit-border-radius: 0;
   border-radius: 0;
 }
 
 .module {
-  background: #ddd;
+  background: #eee;
   height: 300px;
   white-space: pre-wrap;
 }
 
 .pointer {
   cursor: pointer;
-}
-
-.board-bg {
-  background: #FFF;
-}
-
-.white {
-  background: #FFF;
 }

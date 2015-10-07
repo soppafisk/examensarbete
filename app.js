@@ -5,6 +5,7 @@ var path = require('path');
 var mongoose = require('mongoose');
 var app = express();
 var bodyParser = require('body-parser');
+var shortid = require('shortid');
 
 mongoose.connect("mongodb://localhost/ponk");
 var Schema = mongoose.Schema;
@@ -23,22 +24,18 @@ app.use(bodyParser.json());
 
 app.use('/vendor', express.static(__dirname + '/node_modules'));
 
-app.get('/', function (req, res) {
-
-});
-
-app.get('/board', function(req, res) {
-  Board.find(function(err, data) {
+app.get('/board/:url', function(req, res) {
+  Board.findOne({link: req.params.url}, function(err, data) {
     res.json(data);
   });
 });
 
-app.put('/board/:id', function(req, res) {
-  console.log(req.body);
-  Board.update({_id: req.params.id}, req.body, {}, function(err, response) {
-    console.log(response);
+// Save board
+app.put('/board/:url', function(req, res) {
+  Board.update({link: req.params.url}, req.body, {}, function(err, response) {
+    res.json(response);
   });
-  console.log("put");
+  console.log("save");
 });
 
 app.post('/board', function(req, res) {
@@ -50,6 +47,18 @@ app.post('/board', function(req, res) {
     if (err)
       console.error(err);
   });
+});
+
+app.get('/:url', function (req, res) {
+  var options = {
+    root: __dirname + '/public/',
+    dotfiles: 'deny',
+    headers: {
+        'x-timestamp': Date.now(),
+        'x-sent': true
+    }
+  };
+  res.sendFile('index.html', options);
 });
 
 var server = app.listen(3000, function () {

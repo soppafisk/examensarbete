@@ -1,21 +1,26 @@
-var ponk = angular.module("ponk", []);
+var ponk = angular.module("ponk", ["ui.router", "ngResource"]);
 
-ponk.controller("AppCtrl", ["$scope", "$http", function($scope, $http) {
+ponk.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
+  $urlRouterProvider.otherwise('/home'); // default route
+
+   $stateProvider.state('users.details', {
+     url: '/:id',
+     templateUrl: '',
+     controller: 'AppCtrl'
+   });
+
+}]);
+
+ponk.controller("AppCtrl", ["$scope", "$http", "$stateParams", "$resource", function($scope, $http, $stateParams, $resource) {
   var pk = this;
-
-  pk.board = {};
-  $http.get('/board').success(function(data){
-    pk.board = data[0];
-  });
+  var Board = $resource('/board/:url', {url:'url'}, {update: { method: "PUT"}});
+  pk.board = Board.get({url:"abc"});
 
   // Toggle add widget form
   pk.showAddWidget = false;
 
   pk.saveBoard = function() {
-    console.log("put to /board");
-    console.log(pk.board._id);
-
-    $http.put('/board/' + pk.board._id, pk.board);
+    $http.put('/board/' + pk.board.link, pk.board);
   };
 
   pk.toggleAddWidget = function () {

@@ -2,22 +2,17 @@ var express = require('express');
 //var routes = require('./routes');
 var http = require('http');
 var path = require('path');
-var mongoose = require('mongoose');
+
 var app = express();
 var bodyParser = require('body-parser');
 var shortid = require('shortid');
 
+// models
+var mongoose = require('mongoose');
+require('./models/Boards');
 mongoose.connect("mongodb://localhost/ponk");
-var Schema = mongoose.Schema;
+var Board = mongoose.model("Board");
 
-var boardSchema = new Schema({
-  title: String,
-  link: String,
-  createdAt: {type: Date, default: Date.now},
-  widgets: [{wType: String, content: String, size: String, x: Number, y: Number}],
-});
-
-var Board = mongoose.model("Board", boardSchema);
 
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
@@ -39,17 +34,10 @@ app.put('/board/:url', function(req, res) {
 });
 
 app.post('/board', function(req, res) {
-  console.log(req);
-  var board1 = new Board({link: "ny länk", createdAt: new Date(),
-    widgets: [{wType: "text", content: "content2", size: "2x4", x: 1, y: 2}],
-  });
-  board1.save(function (err) {
-    if (err)
-      console.error(err);
-  });
+
 });
 
-app.get('/:url', function (req, res) {
+app.get('/*', function (req, res) {
   var options = {
     root: __dirname + '/public/',
     dotfiles: 'deny',

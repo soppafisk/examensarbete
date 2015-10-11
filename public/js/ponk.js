@@ -1,20 +1,39 @@
 var ponk = angular.module("ponk", ["ui.router", "ngResource"]);
 
-ponk.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
-  $urlRouterProvider.otherwise('/home'); // default route
+ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", function ($stateProvider, $urlRouterProvider, $locationProvider) {
+  $locationProvider.html5Mode(true);
+  $urlRouterProvider.otherwise('/'); // default route
 
-   $stateProvider.state('users.details', {
-     url: '/:id',
-     templateUrl: '',
-     controller: 'AppCtrl'
+   $stateProvider.state('board', {
+     url: '/b/:url',
+     templateUrl: 'views/board.html',
+     controller: "AppCtrl as pk",
+     resolve: {
+      board: ['$stateParams', 'boardFactory', function($stateParams, boardFactory) {
+        console.log($stateParams.url);
+        return boardFactory.get({url:$stateParams.url});
+
+      }]
+     }
    });
 
+}]).run(function($state) {
+  $state.go('board'); //make a transition to movies state when app starts
+});;
+
+ponk.factory("boardFactory", ["$http", "$resource", function($http, $resource) {
+  return $resource('/board/:url', {url:'url'}, {update: { method: "PUT"}});
 }]);
 
-ponk.controller("AppCtrl", ["$scope", "$http", "$stateParams", "$resource", function($scope, $http, $stateParams, $resource) {
+// ponk.controller("boardController", ["board", function(board){
+//
+// }]);
+
+ponk.controller("AppCtrl", ["$scope", "$http", "$resource", "boardFactory", "board", function($scope, $http, $resource, boardFactory, board ) {
   var pk = this;
-  var Board = $resource('/board/:url', {url:'url'}, {update: { method: "PUT"}});
-  pk.board = Board.get({url:"abc"});
+  pk.board =
+  //var Board = $resource('/board/:url', {url:'url'}, {update: { method: "PUT"}});
+  pk.board = boardFactory.get();
 
   // Toggle add widget form
   pk.showAddWidget = false;

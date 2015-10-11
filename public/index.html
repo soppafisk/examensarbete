@@ -2,61 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/style.css">
-  <script src="vendor/angular/angular.min.js"></script>
+  <link rel="stylesheet" href="/vendor/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/vendor/angular/angular.min.js"></script>
   <script src="/vendor/angular-ui-router/release/angular-ui-router.min.js"></script>
   <script src="/vendor/angular-resource/angular-resource.min.js"></script>
   <title>Ponk</title>
+  <base href="/">
 </head>
 <body  class="board-bg">
-  <div class="container-fluid" ng-app="ponk" ng-controller="AppCtrl as pk">
-    <div class="row">
-      <div class="col-xs-12 navbar banner">
-        <span class="logo">Ponk</span>
-        <button class="btn btn-primary" ng-click="pk.saveBoard()">Spara</button>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-xs-2">
-
-          <button class="btn btn-default add-module" ng-click="pk.toggleAddWidget()">Lägg till modul</button>
-          <div ng-show="pk.showAddWidget">
-            <form action="" novalidate>
-              <div class="form-group">
-                <label for="widgetType"></label>
-                <select class="form-control" name="widgetType" ng-model="pk.newWidget.wType">
-                  <option value="text" selected>Text</option>
-                  <option value="youtube">Youtube</option>
-                </select>
-              </div>
-
-              <div ng-switch="pk.newWidget.wType">
-
-                <div ng-switch-when="youtube" class="form-group">
-                  <label for="youtube">Youtube</label>
-                  <input type="text" name="youtube" ng-model="pk.newWidget.content" class="form-control">
-                </div>
-                <div ng-switch-when="text" class="form-group">
-                  <label for="formText">Text</label>
-                  <textarea ng-model="pk.newWidget.content" name="formText" class="form-control"></textarea>
-                </div>
-
-              </div>
-              <button ng-click="pk.addWidget()" type="button" class="btn btn-default">Lägg till</button>
-            </form>
-          </div>
-      </div>
-      <div class="col-xs-10">
-        <div ng-repeat="w in pk.board.widgets">
-          <module  remove-fn="pk.deleteWidget(widget)" widget="w"></module>
-        </div>
-      </div>
-    </div>
+  <div class="container-fluid" ng-app="ponk">
+    <ui-view></ui-view>
 
   </div>
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="js/ponk.js"></script>
+<script src="/vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/js/ponk.js"></script>
 </body>
 </html>

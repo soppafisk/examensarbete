@@ -6,47 +6,49 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
 
    $stateProvider.state('board', {
      url: '/b/:slug',
-     templateUrl: 'views/board.html',
-     controller: "AppCtrl",
-     controllerAs: "pk",
-     resolve: {
-      board: function($stateParams, boardFactory) {
-        console.log($stateParams.slug);
-        var board = {};
-        if($stateParams.slug) {
-          board = boardFactory.get({slug:$stateParams.slug}).$promise;
-        }
-        //console.log(board);
-        return board;
-      }
+     views: {
+       "": {
+         templateUrl: 'views/board.html',
+         controller: "AppCtrl",
+         controllerAs: "pk",
+         resolve: {
+          board: ["$stateParams", "boardFactory", function($stateParams, boardFactory) {
+            var board = {widgets: []};
+            if($stateParams.slug) {
+              board = boardFactory.get({slug:$stateParams.slug}).$promise;
+            }
+            return board;
+          }]
+         }
+       }
      }
    });
-
 }]).run(function($state) {
   $state.go('board');
-});;
+});
 
 ponk.factory("boardFactory", ["$http", "$resource", function($http, $resource) {
-  return $resource('/board/:slug', {slug:'slug'}, {update: { method: "PUT"}});
+  return $resource('/board/:slug', {slug:'@slug'}, {update: { method: "PUT"}});
 }]);
 
-ponk.controller("AppCtrl", ["$scope", "$http", "boardFactory", "board", function($scope, $http, boardFactory, board ) {
+ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", function($scope, board, boardFactory) {
   var pk = this;
-
+  pk.board = board;
+  console.log(pk.board);
   var emptyBoard = {
     title: "Ny board",
     widgets: [],
-  }
+  };
 
-
-  pk.board = board;
-  console.log(pk.board.widgets);
-
-  // Toggle add widget form
+  //Toggle add widget form
   pk.showAddWidget = false;
 
   pk.saveBoard = function() {
-    $http.put('/board/' + pk.board.link, pk.board);
+    pk.board.$update(function(){
+
+    });
+
+    //$http.put('/board/' + pk.board.link, pk.board);
   };
 
   pk.toggleAddWidget = function () {
@@ -104,7 +106,6 @@ ponk.directive("module", function($compile) {
   return {
     scope: {widget: '=', removeFn:'&'},
     transclude: 'true',
-    controller: 'AppCtrl',
     restrict: 'E',
     link: linker,
   }

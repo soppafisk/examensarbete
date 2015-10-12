@@ -20,17 +20,26 @@ app.use(bodyParser.json());
 app.use('/vendor', express.static(__dirname + '/node_modules'));
 
 app.get('/board/:url', function(req, res) {
-  Board.findOne({link: req.params.url}, function(err, data) {
+  Board.findOne({slug: req.params.url}, function(err, data) {
     res.json(data);
   });
 });
 
 // Save board
 app.put('/board/:url', function(req, res) {
-  Board.update({link: req.params.url}, req.body, {}, function(err, response) {
+  var board = req.body;
+  console.log(req.body);
+  delete board._id;
+  delete board.slug;
+
+  Board.findOneAndUpdate({slug: req.params.url}, board, {upsert: true}, function(err, response) {
+    console.log(response);
     res.json(response);
+    if(err){
+      console.log(err);
+    }
   });
-  console.log("save");
+//console.log(req.body);
 });
 
 app.post('/board', function(req, res) {

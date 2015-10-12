@@ -37,7 +37,11 @@ app.post('/board', function(req, res) {
 
 });
 
-app.get('/*', function (req, res) {
+app.all('/board', function(req, res) {
+
+});
+
+app.get('/b/:url', function (req, res) {
   var options = {
     root: __dirname + '/public/',
     dotfiles: 'deny',

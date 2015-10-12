@@ -2,38 +2,45 @@ var ponk = angular.module("ponk", ["ui.router", "ngResource"]);
 
 ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", function ($stateProvider, $urlRouterProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
-  $urlRouterProvider.otherwise('/'); // default route
+  $urlRouterProvider.otherwise('/');
 
    $stateProvider.state('board', {
-     url: '/b/:url',
+     url: '/b/:slug',
      templateUrl: 'views/board.html',
-     controller: "AppCtrl as pk",
+     controller: "AppCtrl",
+     controllerAs: "pk",
      resolve: {
-      board: ['$stateParams', 'boardFactory', function($stateParams, boardFactory) {
-        console.log($stateParams.url);
-        return boardFactory.get({url:$stateParams.url});
-
-      }]
+      board: function($stateParams, boardFactory) {
+        console.log($stateParams.slug);
+        var board = {};
+        if($stateParams.slug) {
+          board = boardFactory.get({slug:$stateParams.slug}).$promise;
+        }
+        //console.log(board);
+        return board;
+      }
      }
    });
 
 }]).run(function($state) {
-  $state.go('board'); //make a transition to movies state when app starts
+  $state.go('board');
 });;
 
 ponk.factory("boardFactory", ["$http", "$resource", function($http, $resource) {
-  return $resource('/board/:url', {url:'url'}, {update: { method: "PUT"}});
+  return $resource('/board/:slug', {slug:'slug'}, {update: { method: "PUT"}});
 }]);
 
-// ponk.controller("boardController", ["board", function(board){
-//
-// }]);
-
-ponk.controller("AppCtrl", ["$scope", "$http", "$resource", "boardFactory", "board", function($scope, $http, $resource, boardFactory, board ) {
+ponk.controller("AppCtrl", ["$scope", "$http", "boardFactory", "board", function($scope, $http, boardFactory, board ) {
   var pk = this;
-  pk.board =
-  //var Board = $resource('/board/:url', {url:'url'}, {update: { method: "PUT"}});
-  pk.board = boardFactory.get();
+
+  var emptyBoard = {
+    title: "Ny board",
+    widgets: [],
+  }
+
+
+  pk.board = board;
+  console.log(pk.board.widgets);
 
   // Toggle add widget form
   pk.showAddWidget = false;

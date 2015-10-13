@@ -4,8 +4,9 @@ var http = require('http');
 var path = require('path');
 
 var app = express();
-var bodyParser = require('body-parser');
 var shortid = require('shortid');
+var bodyParser = require('body-parser');
+app.use(bodyParser.json());
 
 // models
 var mongoose = require('mongoose');
@@ -15,31 +16,39 @@ var Board = mongoose.model("Board");
 
 
 app.use(express.static(__dirname + "/public"));
-app.use(bodyParser.json());
 
 app.use('/vendor', express.static(__dirname + '/node_modules'));
 
 app.get('/board/:url', function(req, res) {
   Board.findOne({slug: req.params.url}, function(err, data) {
-    res.json(data);
+    if (data)
+      res.json(data);
+    else {
+      var emptyBoard = {title: "Ny board", widgets: []};
+      res.json(emptyBoard);
+    }
+
   });
 });
 
 // Save board
 app.put('/board/:url', function(req, res) {
+
+  if (!req.params.url) {
+    console.log("ingen url");
+  }
   var board = req.body;
   console.log(req.body);
   delete board._id;
   delete board.slug;
 
-  Board.findOneAndUpdate({slug: req.params.url}, board, {upsert: true}, function(err, response) {
-    console.log(response);
+  Board.findOneAndUpdate({slug: req.params.url}, board, {upsert: true, new: true}, function(err, response) {
+    console.log("save");
     res.json(response);
     if(err){
       console.log(err);
     }
   });
-//console.log(req.body);
 });
 
 app.post('/board', function(req, res) {
@@ -50,7 +59,7 @@ app.all('/board', function(req, res) {
 
 });
 
-app.get('/b/:url', function (req, res) {
+app.get('/b/(:url)?', function (req, res) {
   var options = {
     root: __dirname + '/public/',
     dotfiles: 'deny',

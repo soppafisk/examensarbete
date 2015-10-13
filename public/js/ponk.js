@@ -3,15 +3,35 @@ var ponk = angular.module("ponk", ["ui.router", "ngResource"]);
 ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", function ($stateProvider, $urlRouterProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
   $urlRouterProvider.otherwise('/');
+  $stateProvider.state('empty', {
+    url: '/b/',
+    views: {
+      "": {
+        templateUrl: 'views/board.html',
+        controller: "AppCtrl",
+        controllerAs: "pk",
+        resolve: {
+          board: ["$stateParams", "boardFactory", function($stateParams, boardFactory) {
+            var board = new boardFactory();
+            board.widgets = [];
+            board.title = "Ny board";
+            console.log(board);
+            console.log("här är jag");
+            return board;
+          }]
+        }
+      }
+    }
+  });
 
-   $stateProvider.state('board', {
-     url: '/b/:slug',
-     views: {
-       "": {
-         templateUrl: 'views/board.html',
-         controller: "AppCtrl",
-         controllerAs: "pk",
-         resolve: {
+  $stateProvider.state('board', {
+    url: '/b/:slug',
+    views: {
+      "": {
+        templateUrl: 'views/board.html',
+        controller: "AppCtrl",
+        controllerAs: "pk",
+        resolve: {
           board: ["$stateParams", "boardFactory", function($stateParams, boardFactory) {
             var board = {widgets: []};
             if($stateParams.slug) {
@@ -19,12 +39,12 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
             }
             return board;
           }]
-         }
-       }
-     }
-   });
+        }
+      }
+    }
+  });
 }]).run(function($state) {
-  $state.go('board');
+  $state.go('empty');
 });
 
 ponk.factory("boardFactory", ["$http", "$resource", function($http, $resource) {
@@ -33,26 +53,20 @@ ponk.factory("boardFactory", ["$http", "$resource", function($http, $resource) {
 
 ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", function($scope, board, boardFactory) {
   var pk = this;
+  console.log(board);
+
   pk.board = board;
-  console.log(pk.board);
-  var emptyBoard = {
-    title: "Ny board",
-    widgets: [],
-  };
 
   //Toggle add widget form
   pk.showAddWidget = false;
+  pk.toggleAddWidget = function () {
+    pk.showAddWidget = !pk.showAddWidget;
+  };
 
   pk.saveBoard = function() {
     pk.board.$update(function(){
 
     });
-
-    //$http.put('/board/' + pk.board.link, pk.board);
-  };
-
-  pk.toggleAddWidget = function () {
-    pk.showAddWidget = !pk.showAddWidget;
   };
 
   pk.newWidget = {

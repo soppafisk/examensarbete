@@ -24,7 +24,7 @@ app.get('/board/:url', function(req, res) {
     if (data)
       res.json(data);
     else {
-      var emptyBoard = {title: "Ny board", widgets: []};
+      var emptyBoard = {title: "Ny board", slug: "", widgets: []};
       res.json(emptyBoard);
     }
 
@@ -34,7 +34,7 @@ app.get('/board/:url', function(req, res) {
 // Save board
 app.put('/board/:url', function(req, res) {
 
-  if (!req.params.url) {
+  if (req.params.url === "") {
     console.log("ingen url");
   }
   var board = req.body;
@@ -52,11 +52,12 @@ app.put('/board/:url', function(req, res) {
 });
 
 app.post('/board', function(req, res) {
-
-});
-
-app.all('/board', function(req, res) {
-
+  var data = req.body;
+  var board = new Board(data);
+  board.save(function(err, newBoard) {
+    console.log(newBoard);
+    res.json(newBoard);
+  });
 });
 
 app.get('/b/(:url)?', function (req, res) {

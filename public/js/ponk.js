@@ -3,6 +3,18 @@ var ponk = angular.module("ponk", ["ui.router", "ngResource"]);
 ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", function ($stateProvider, $urlRouterProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
   $urlRouterProvider.otherwise('/');
+
+  $stateProvider.state('home', {
+    url: '/',
+    views: {
+      "": {
+        templateUrl: 'views/home.html',
+        controller: "HomeCtrl",
+        controllerAs: "hc",
+      }
+    }
+  });
+
   $stateProvider.state('empty', {
     url: '/b/',
     views: {
@@ -43,17 +55,25 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
       }
     }
   });
-}]).run(function($state) {
-  $state.go('empty');
-});
+}]);
+
+
+ponk.controller("HomeCtrl", [function(){
+  console.log("home");
+  var hc = this;
+  hc.createNewBoard = function() {
+    console.log("ny board");
+    $state.go("empty");
+  };
+
+}]);
 
 ponk.factory("boardFactory", ["$http", "$resource", function($http, $resource) {
   return $resource('/board/:slug', {slug:'@slug'}, {update: { method: "PUT"}});
 }]);
 
-ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", function($scope, board, boardFactory) {
+ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", function($scope, board, boardFactory, $state) {
   var pk = this;
-  console.log(board);
 
   pk.board = board;
 
@@ -63,12 +83,29 @@ ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", function($scope, 
     pk.showAddWidget = !pk.showAddWidget;
   };
 
-  pk.saveBoard = function() {
-    pk.board.$update(function(){
+  pk.saving = false;
 
-    });
+  // save board. If new, post, if existing, put
+  pk.saveBoard = function() {
+    pk.saving = true;
+    if(pk.board.slug) {
+      console.log("put");
+      pk.board.$update(function(){
+        pk.saving = false;
+      });
+    } else {
+      pk.board.$save(function(newBoard) {
+        console.log("post");
+        pk.board = newBoard;
+        pk.saving = false;
+        $state.go("board", {slug: newBoard.slug} );
+      });
+
+    }
+
   };
 
+  // new wigets has text preselected
   pk.newWidget = {
     wType: "text",
     content: ""

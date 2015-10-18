@@ -21,13 +21,19 @@ app.use('/vendor', express.static(__dirname + '/node_modules'));
 
 app.get('/board/:url', function(req, res) {
   Board.findOne({slug: req.params.url}, function(err, data) {
-    if (data)
-      res.json(data);
-    else {
-      var emptyBoard = {title: "Ny board", slug: "", widgets: []};
-      res.json(emptyBoard);
-    }
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      if(!data) {
+        return res.status(404).send({
+          message: "Finns ingen board på denna url"
+        });
+      }
+      return res.json(data);
 
+    }
   });
 });
 
@@ -42,7 +48,7 @@ app.put('/board/:url', function(req, res) {
   delete board._id;
   delete board.slug;
 
-  Board.findOneAndUpdate({slug: req.params.url}, board, {upsert: true, new: true}, function(err, response) {
+  Board.findOneAndUpdate({slug: req.params.url}, board, {runValidators: true, new: true}, function(err, response) {
     console.log("save");
     res.json(response);
     if(err){
@@ -53,8 +59,11 @@ app.put('/board/:url', function(req, res) {
 
 app.post('/board', function(req, res) {
   var data = req.body;
+  console.log(data);
   var board = new Board(data);
   board.save(function(err, newBoard) {
+    if(err)
+      console.log(err);
     console.log(newBoard);
     res.json(newBoard);
   });

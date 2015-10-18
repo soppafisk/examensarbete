@@ -12,7 +12,9 @@
     "mongoose": "^4.1.6",
     "shortid": "^2.2.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "gulp-browserify": "^0.5.1"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js"

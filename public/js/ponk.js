@@ -94,6 +94,7 @@ ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", functio
         pk.saving = false;
       });
     } else {
+      console.log(pk.board);
       pk.board.$save(function(newBoard) {
         console.log("post");
         pk.board = newBoard;

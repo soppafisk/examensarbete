@@ -10,8 +10,8 @@
 
       <button class="btn btn-default add-module" ng-click="pk.toggleAddWidget()">Lägg till modul</button>
       <div ng-show="pk.showAddWidget">
-        <form action="" novalidate>
-          <div class="form-group">
+        <form action="" name="pk.add-widget-form" novalidate>
+          <div  class="form-group">
             <label for="widgetType"></label>
             <select class="form-control" name="widgetType" ng-model="pk.newWidget.wType">
               <option value="text" selected>Text</option>

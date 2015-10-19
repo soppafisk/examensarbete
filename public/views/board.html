@@ -13,17 +13,19 @@
         <form action="" name="pk.add-widget-form" novalidate>
           <div  class="form-group">
             <label for="widgetType"></label>
-            <select class="form-control" name="widgetType" ng-model="pk.newWidget.wType">
+            <select class="form-control" name="widgetType" ng-model="pk.newWidget.wType" required>
               <option value="text" selected>Text</option>
               <option value="youtube">Youtube</option>
             </select>
+            <p ng-show="pk.add-widget-form.widgetType.$invalid && !pk.add-widget-form.widgetType.$pristine">Ej giltig</p>
           </div>
 
           <div ng-switch="pk.newWidget.wType">
 
             <div ng-switch-when="youtube" class="form-group">
               <label for="youtube">Youtube</label>
-              <input type="text" name="youtube" ng-model="pk.newWidget.content" class="form-control">
+              <input type="text" name="youtube" ng-model="pk.newWidget.content" class="form-control" >
+              <p ng-show="pk.add-widget-form.youtube">{{ pk.add-widget-form.youtube }}</p>
             </div>
             <div ng-switch-when="text" class="form-group">
               <label for="formText">Text</label>
@@ -35,9 +37,11 @@
         </form>
       </div>
   </div>
-  <div class="col-xs-10">
-    <div ng-repeat="w in pk.board.widgets">
-      <module  remove-fn="pk.deleteWidget(widget)" widget="w"></module>
-    </div>
+  <div class="col-xs-10" gridster>
+    <ul>
+      <li gridster-item="w" ng-repeat="w in pk.board.widgets">
+        <module  remove-fn="pk.deleteWidget(widget)" widget="w"></module>
+      </li>
+    </ul>
   </div>
 </div>

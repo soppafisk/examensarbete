@@ -5,11 +5,11 @@
 }
 
 .module {
-  background: #eee;
-  height: 300px;
   white-space: pre-wrap;
 }
-
+.gridster ul li {
+  background: #eee;
+}
 .pointer {
   cursor: pointer;
 }

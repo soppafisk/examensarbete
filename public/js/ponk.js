@@ -1,4 +1,4 @@
-var ponk = angular.module("ponk", ["ui.router", "ngResource"]);
+var ponk = angular.module("ponk", ["ui.router", "ngResource", "gridster"]);
 
 ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", function ($stateProvider, $urlRouterProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
@@ -27,8 +27,6 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
             var board = new boardFactory();
             board.widgets = [];
             board.title = "Ny board";
-            console.log(board);
-            console.log("här är jag");
             return board;
           }]
         }
@@ -129,8 +127,8 @@ ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", functio
 
 ponk.directive("module", function($compile) {
   var before = '<div><span class="glyphicon glyphicon-remove-circle pointer" ng-click="deleteWidget(widget)"></span></div>';
-  var textTemplate = '<div class=" col-xs-2">' + before + '<div class="module">{{ widget.content }}</div></div>';
-  var youtubeTemplate = '<div class="col-xs-4">' + before + '<div class="module"><iframe id="ytplayer" type="text/html" width="500" height="300" src="http://www.youtube.com/embed/?autoplay=0" frameborder="0"/></div></div>';
+  var textTemplate = '<div>' + before + '<div class="module">{{ widget.content }}</div></div>';
+  var youtubeTemplate = '<div>' + before + '<div class="module"><iframe id="ytplayer" type="text/html" width="500" height="300" src="http://www.youtube.com/embed/?autoplay=0" frameborder="0"/>{{ widget.concat }}</div></div>';
 
   var getTemplate = function(wType) {
 

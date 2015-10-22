@@ -4,7 +4,7 @@ var browserify = require('gulp-browserify');
 // Basic usage
 gulp.task('scripts', function() {
     // Single entry point to browserify
-    gulp.src('src/js/app.js')
+    gulp.src('src/js/scripts.js')
         .pipe(browserify({
           insertGlobals : true,
           debug : !gulp.env.production

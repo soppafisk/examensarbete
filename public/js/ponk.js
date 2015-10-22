@@ -55,6 +55,10 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
   });
 }]);
 
+ponk.run(['gridsterConfig', function(gridsterConfig) {
+  gridsterConfig.margins = [20, 20];
+}]);
+
 
 ponk.controller("HomeCtrl", [function(){
   console.log("home");
@@ -74,6 +78,15 @@ ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", functio
   var pk = this;
 
   pk.board = board;
+  $scope.$on('gridster-draggable-changed', function(gridster) {
+    //console.log(gridster);
+    //console.log(board.widgets[0]);
+  });
+  $scope.$watch('pk.board.widgets[0].sizeX', function(gridster) {
+    //console.log(gridster);
+    console.log("board");
+    console.log(board.widgets[0]);
+  });
 
   //Toggle add widget form
   pk.showAddWidget = false;

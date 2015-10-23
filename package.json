@@ -4,6 +4,7 @@
   "main": "app.js",
   "dependencies": {
     "angular": "^1.4.5",
+    "angular-gridster": "^0.13.3",
     "angular-resource": "^1.4.7",
     "angular-ui-router": "^0.2.15",
     "body-parser": "^1.14.1",
@@ -13,7 +14,8 @@
     "shortid": "^2.2.2"
   },
   "devDependencies": {
-    "gulp-browserify": "^0.5.1"
+    "gulp-browserify": "^0.5.1",
+    "gulp-uglify": "^1.4.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

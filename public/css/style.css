@@ -1,3 +1,7 @@
+body {
+  overflow-y: scroll;
+}
+
 .navbar {
   background: #D1C4E9;
   -webkit-border-radius: 0;

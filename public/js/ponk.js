@@ -56,7 +56,11 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
 }]);
 
 ponk.run(['gridsterConfig', function(gridsterConfig) {
+  gridsterConfig.floating = false;
+  gridsterConfig.pushing = false;
   gridsterConfig.margins = [20, 20];
+  gridsterConfig.resizable.handles = ['s', 'e',];
+  gridsterConfig.draggable.handle = ".pointer";
 }]);
 
 
@@ -78,15 +82,6 @@ ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", functio
   var pk = this;
 
   pk.board = board;
-  $scope.$on('gridster-draggable-changed', function(gridster) {
-    //console.log(gridster);
-    //console.log(board.widgets[0]);
-  });
-  $scope.$watch('pk.board.widgets[0].sizeX', function(gridster) {
-    //console.log(gridster);
-    console.log("board");
-    console.log(board.widgets[0]);
-  });
 
   //Toggle add widget form
   pk.showAddWidget = false;
@@ -139,9 +134,9 @@ ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", functio
 }]);
 
 ponk.directive("module", function($compile) {
-  var before = '<div><span class="glyphicon glyphicon-remove-circle pointer" ng-click="deleteWidget(widget)"></span></div>';
+  var before = '<div><span class="glyphicon glyphicon-remove-circle pointer" ng-click="deleteWidget(widget)"></span> <span class="glyphicon glyphicon-resize-horizontal pointer"></span></div>';
   var textTemplate = '<div>' + before + '<div class="module">{{ widget.content }}</div></div>';
-  var youtubeTemplate = '<div>' + before + '<div class="module"><iframe id="ytplayer" type="text/html" width="500" height="300" src="http://www.youtube.com/embed/?autoplay=0" frameborder="0"/>{{ widget.concat }}</div></div>';
+  var youtubeTemplate = '<div>' + before + '<div class="module"><iframe id="ytplayer" type="text/html" width="500" height="300" src="http://www.youtube.com/embed/?autoplay=0" frameborder="0"/></div></div>';
 
   var getTemplate = function(wType) {
 

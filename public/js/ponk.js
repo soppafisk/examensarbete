@@ -134,16 +134,22 @@ ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", functio
 }]);
 
 ponk.directive("module", function($compile) {
+  var youtubeLink = function(content) {
+    var youtubesrc = 'src="http://www.youtube.com/embed/'+ content +'?autoplay=0"';
+    var youtubeTemplate = '<div>' + before + '<div class="module"><iframe id="ytplayer" type="text/html" width="500" height="300" ' + youtubesrc + ' frameborder="0"/></div></div>';
+    return youtubeTemplate;
+  }
+
   var before = '<div><span class="glyphicon glyphicon-remove-circle pointer" ng-click="deleteWidget(widget)"></span> <span class="glyphicon glyphicon-resize-horizontal pointer"></span></div>';
   var textTemplate = '<div>' + before + '<div class="module">{{ widget.content }}</div></div>';
-  var youtubeTemplate = '<div>' + before + '<div class="module"><iframe id="ytplayer" type="text/html" width="500" height="300" src="http://www.youtube.com/embed/?autoplay=0" frameborder="0"/></div></div>';
 
-  var getTemplate = function(wType) {
+
+  var getTemplate = function(wType, content) {
 
     var template = "";
     switch(wType) {
       case "youtube":
-        template = youtubeTemplate;
+        template = youtubeLink(content);
         break;
       case "text":
       default:
@@ -154,7 +160,7 @@ ponk.directive("module", function($compile) {
   }
 
   var linker = function(scope, element, attrs) {
-    var el = $compile(getTemplate(scope.widget.wType))(scope);
+    var el = $compile(getTemplate(scope.widget.wType, scope.widget.content))(scope);
     element.replaceWith(el);
     scope.deleteWidget = function(w){
       scope.removeFn({widget:w});

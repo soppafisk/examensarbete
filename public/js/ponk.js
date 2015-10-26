@@ -56,10 +56,15 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
 }]);
 
 ponk.run(['gridsterConfig', function(gridsterConfig) {
+  gridsterConfig.columns = 30;
+  gridsterConfig.width = 3000;
+  gridsterConfig.rowHeight = 40;
+  gridsterConfig.defaultSizeY = 8;
+  gridsterConfig.defaultSizeX = 5;
   gridsterConfig.floating = false;
   gridsterConfig.pushing = false;
   gridsterConfig.margins = [20, 20];
-  gridsterConfig.resizable.handles = ['s', 'e',];
+  gridsterConfig.resizable.handles = ['s', 'e', 'se'];
   gridsterConfig.draggable.handle = ".pointer";
 }]);
 
@@ -107,9 +112,7 @@ ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", functio
         pk.saving = false;
         $state.go("board", {slug: newBoard.slug} );
       });
-
     }
-
   };
 
   // new wigets has text preselected
@@ -124,6 +127,14 @@ ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", functio
     pk.showAddWidget = false;
   };
 
+  pk.editWidget = function(widget) {
+    console.log(widget);
+    var index = pk.board.widgets.indexOf(widget);
+    var edit = widget;
+    edit.content = "hejhej";
+    console.log(index);
+  }
+
   pk.deleteWidget = function(widget) {
     var index = pk.board.widgets.indexOf(widget);
     if(index != -1) {
@@ -136,11 +147,11 @@ ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", functio
 ponk.directive("module", function($compile) {
   var youtubeLink = function(content) {
     var youtubesrc = 'src="http://www.youtube.com/embed/'+ content +'?autoplay=0"';
-    var youtubeTemplate = '<div>' + before + '<div class="module"><iframe id="ytplayer" type="text/html" width="500" height="300" ' + youtubesrc + ' frameborder="0"/></div></div>';
+    var youtubeTemplate = '<div>' + before + '<div class="module embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" type="text/html" ' + youtubesrc + ' allowfullscreen /></div></div>';
     return youtubeTemplate;
   }
 
-  var before = '<div><span class="glyphicon glyphicon-remove-circle pointer" ng-click="deleteWidget(widget)"></span> <span class="glyphicon glyphicon-resize-horizontal pointer"></span></div>';
+  var before = '<div><span class="glyphicon glyphicon-remove-circle pointer" ng-click="deleteWidget(widget)"></span> <span ng-click="editWidget(widget)" class="glyphicon glyphicon-pencil pointer"></span>  <span class="glyphicon glyphicon-resize-horizontal pointer"></span></div>';
   var textTemplate = '<div>' + before + '<div class="module">{{ widget.content }}</div></div>';
 
 
@@ -162,13 +173,18 @@ ponk.directive("module", function($compile) {
   var linker = function(scope, element, attrs) {
     var el = $compile(getTemplate(scope.widget.wType, scope.widget.content))(scope);
     element.replaceWith(el);
+
+    scope.editWidget = function(w) {
+      scope.editFn({widget:w});
+    }
+
     scope.deleteWidget = function(w){
       scope.removeFn({widget:w});
     }
   }
 
   return {
-    scope: {widget: '=', removeFn:'&'},
+    scope: {widget: '=', removeFn:'&', editFn: "&"},
     transclude: 'true',
     restrict: 'E',
     link: linker,

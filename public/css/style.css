@@ -17,3 +17,7 @@ body {
 .pointer {
   cursor: pointer;
 }
+
+.gridster-item {
+  overflow: hidden;
+}

@@ -1,11 +1,21 @@
 body {
   overflow-y: scroll;
+  background: #315c7a;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex > div {
+  flex: 1;
 }
 
 .navbar {
-  background: #D1C4E9;
+  background: #315c7a;
   -webkit-border-radius: 0;
   border-radius: 0;
+  margin: 0;
 }
 
 .module {
@@ -20,4 +30,26 @@ body {
 
 .gridster-item {
   overflow: hidden;
+}
+
+#main-grid {
+  width: 95%;
+  margin-left: 5%;
+}
+
+.sidebar {
+  width: 5%;
+  height: 100%;
+  padding: 10px;
+  background: #eee;
+  position: absolute;
+  left: 0;
+  -webkit-transition: width 1s;
+  transition: width 1s;
+  z-index: 100;
+
+}
+
+.sidebar-wide {
+  width: 25%;
 }

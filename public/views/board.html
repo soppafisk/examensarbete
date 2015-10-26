@@ -7,42 +7,48 @@
   </div>
 </div>
 <div class="row">
-  <div class="col-xs-2">
+  <div class="col-xs-12 flex">
+    <div class="sidebar" ng-class="{'sidebar-wide': pk.showAddWidget}">
 
-      <button class="btn btn-default add-module" ng-click="pk.toggleAddWidget()">Lägg till modul</button>
-      <div ng-show="pk.showAddWidget">
-        <form action="" name="pk.add-widget-form" novalidate>
-          <div  class="form-group">
-            <label for="widgetType"></label>
-            <select class="form-control" name="widgetType" ng-model="pk.newWidget.wType" required>
-              <option value="text" selected>Text</option>
-              <option value="youtube">Youtube</option>
-            </select>
-            <p ng-show="pk.add-widget-form.widgetType.$invalid && !pk.add-widget-form.widgetType.$pristine">Ej giltig</p>
-          </div>
-
-          <div ng-switch="pk.newWidget.wType">
-
-            <div ng-switch-when="youtube" class="form-group">
-              <label for="youtube">Youtube</label>
-              <input type="text" name="youtube" ng-model="pk.newWidget.content" class="form-control" >
-              <p ng-show="pk.add-widget-form.youtube">{{ pk.add-widget-form.youtube }}</p>
-            </div>
-            <div ng-switch-when="text" class="form-group">
-              <label for="formText">Text</label>
-              <textarea ng-model="pk.newWidget.content" name="formText" class="form-control"></textarea>
+        <span class="btn add-module glyphicon" ng-class="{'glyphicon-menu-left': pk.showAddWidget, 'glyphicon-menu-right': !pk.showAddWidget, }" ng-click="pk.toggleAddWidget()"></span>
+        <div ng-show="pk.showAddWidget">
+          <form action="" name="pk.add-widget-form" novalidate>
+            <div  class="form-group">
+              <label for="widgetType"></label>
+              <select class="form-control" name="widgetType" ng-model="pk.newWidget.wType" required>
+                <option value="text" selected>Text</option>
+                <option value="youtube">Youtube</option>
+              </select>
+              <p ng-show="pk.add-widget-form.widgetType.$invalid && !pk.add-widget-form.widgetType.$pristine">Ej giltig</p>
             </div>
 
-          </div>
-          <button ng-click="pk.addWidget()" type="button" class="btn btn-default">Lägg till</button>
-        </form>
+            <div ng-switch="pk.newWidget.wType">
+
+              <div ng-switch-when="youtube" class="form-group">
+                <label for="youtube">Youtube</label>
+                <input type="text" name="youtube" ng-model="pk.newWidget.content" class="form-control" >
+                <p ng-show="pk.add-widget-form.youtube">{{ pk.add-widget-form.youtube }}</p>
+              </div>
+              <div ng-switch-when="text" class="form-group">
+                <label for="formText">Text</label>
+                <textarea ng-model="pk.newWidget.content" name="formText" class="form-control"></textarea>
+              </div>
+
+            </div>
+            <button ng-click="pk.addWidget()" type="button" class="btn btn-default">Lägg till</button>
+          </form>
+        </div>
+    </div>
+    <div id="main-grid">
+      <div class="row">
+        <div class="col-xs-12"  gridster>
+          <ul>
+            <li gridster-item="w" ng-repeat="w in pk.board.widgets">
+              <module  remove-fn="pk.deleteWidget(widget)" edit-fn="pk.editWidget(widget)" widget="w"></module>
+            </li>
+          </ul>
+        </div>
       </div>
-  </div>
-  <div class="col-xs-10" gridster>
-    <ul>
-      <li gridster-item="w" ng-repeat="w in pk.board.widgets">
-        <module  remove-fn="pk.deleteWidget(widget)" edit-fn="pk.editWidget(widget)" widget="w"></module>
-      </li>
-    </ul>
+    </div>
   </div>
 </div>

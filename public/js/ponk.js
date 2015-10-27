@@ -127,12 +127,31 @@ ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", functio
     pk.showAddWidget = false;
   };
 
-  pk.editWidget = function(widget) {
-    console.log(widget);
-    var index = pk.board.widgets.indexOf(widget);
-    var edit = widget;
-    edit.content = "hejhej";
-    console.log(index);
+  pk.widgetToEdit = {
+    content: "",
+  };
+  pk.widgetEditIndex;
+
+  pk.showEditWidget = false;
+  pk.editWidget = function($event, widget) {
+    pk.showEditWidget = !pk.showEditWidget;
+    if (pk.showEditWidget) {
+      $('#edit-form').css("top", $event.pageY);
+      $('#edit-form').css("left", $event.pageX);
+      var index = pk.board.widgets.indexOf(widget);
+      pk.widgetEditIndex = index;
+      pk.widgetToEdit = angular.copy(widget);
+    }
+  }
+
+  pk.editFormAbort = function() {
+    pk.showEditWidget = !pk.showEditWidget;
+  }
+
+
+  pk.editFormSave = function() {
+    pk.board.widgets[pk.widgetEditIndex] = pk.widgetToEdit;
+    pk.showEditWidget = false;
   }
 
   pk.deleteWidget = function(widget) {
@@ -151,7 +170,7 @@ ponk.directive("module", function($compile) {
     return youtubeTemplate;
   }
 
-  var before = '<div><span class="glyphicon glyphicon-remove-circle pointer" ng-click="deleteWidget(widget)"></span> <span ng-click="editWidget(widget)" class="glyphicon glyphicon-pencil pointer"></span>  <span class="glyphicon glyphicon-resize-horizontal pointer"></span></div>';
+  var before = '<div><span class="glyphicon glyphicon-remove-circle pointer" ng-click="deleteWidget(widget)"></span> <span ng-click="editWidget($event, widget)" class="glyphicon glyphicon-pencil pointer"></span>  <span class="glyphicon glyphicon-resize-horizontal pointer"></span></div>';
   var textTemplate = '<div>' + before + '<div class="module">{{ widget.content }}</div></div>';
 
 
@@ -174,8 +193,8 @@ ponk.directive("module", function($compile) {
     var el = $compile(getTemplate(scope.widget.wType, scope.widget.content))(scope);
     element.replaceWith(el);
 
-    scope.editWidget = function(w) {
-      scope.editFn({widget:w});
+    scope.editWidget = function($event, w) {
+      scope.editFn({$event: $event, widget:w});
     }
 
     scope.deleteWidget = function(w){

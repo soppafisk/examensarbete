@@ -38,13 +38,19 @@
             <button ng-click="pk.addWidget()" type="button" class="btn btn-default">Lägg till</button>
           </form>
         </div>
+
+        <form id="edit-form" ng-show="pk.showEditWidget">
+          <textarea name="content" class="form-control" ng-model="pk.widgetToEdit.content" value=""></textarea>
+          <button name="abort" class="btn btn-warning" ng-click="pk.editFormAbort()">Avbryt</button><button name="button" class="btn btn-primary" ng-click="pk.editFormSave()">Spara</button>
+        </form>
+
     </div>
     <div id="main-grid">
       <div class="row">
         <div class="col-xs-12"  gridster>
           <ul>
             <li gridster-item="w" ng-repeat="w in pk.board.widgets">
-              <module  remove-fn="pk.deleteWidget(widget)" edit-fn="pk.editWidget(widget)" widget="w"></module>
+              <module  remove-fn="pk.deleteWidget(widget)" edit-fn="pk.editWidget($event, widget)" widget="w"></module>
             </li>
           </ul>
         </div>

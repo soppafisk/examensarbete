@@ -3,14 +3,11 @@ body {
   background: #315c7a;
 }
 
-.flex {
-  display: flex;
+.pointer {
+  cursor: pointer;
 }
 
-.flex > div {
-  flex: 1;
-}
-
+/* Header */
 .navbar {
   background: #315c7a;
   -webkit-border-radius: 0;
@@ -18,14 +15,28 @@ body {
   margin: 0;
 }
 
+/* Widgets */
+
+.widgetcontrols {
+  padding: 2px;
+  width: 100%;
+}
+.widgetcontrols span {
+  margin-right: 5px;
+}
 .module {
   white-space: pre-wrap;
+  padding: 7px;
 }
+
+.module.youtube {
+  padding: 0;
+}
+
+/* Grid */
+
 .gridster ul li {
   background: #eee;
-}
-.pointer {
-  cursor: pointer;
 }
 
 .gridster-item {
@@ -38,6 +49,7 @@ body {
   min-height: 95vh;
 }
 
+/* Edit form */
 #edit-form {
   width: 500px;
   background: white;
@@ -45,8 +57,17 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-
+  -webkit-box-shadow: 5px 5px 25px 11px rgba(0,0,0,0.75);
+  -moz-box-shadow: 5px 5px 25px 11px rgba(0,0,0,0.75);
+  box-shadow: 5px 5px 25px 11px rgba(0,0,0,0.75);
 }
+
+#edit-form textarea {
+  height: 400px;
+  resize: none;
+}
+
+/* Sidebar */
 
 .sidebar {
   width: 5%;
@@ -55,8 +76,8 @@ body {
   background: #eee;
   position: absolute;
   left: 0;
-  -webkit-transition: width 1s;
-  transition: width 1s;
+  -webkit-transition: width 0.5s ease-in-out;
+  transition: width 0.5s ease-in-out;
   z-index: 100;
 
 }

@@ -55,6 +55,8 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
   });
 }]);
 
+
+// settings for gridster
 ponk.run(['gridsterConfig', function(gridsterConfig) {
   gridsterConfig.columns = 30;
   gridsterConfig.width = 3000;
@@ -65,7 +67,7 @@ ponk.run(['gridsterConfig', function(gridsterConfig) {
   gridsterConfig.pushing = false;
   gridsterConfig.margins = [20, 20];
   gridsterConfig.resizable.handles = ['s', 'e', 'se'];
-  gridsterConfig.draggable.handle = ".pointer";
+  gridsterConfig.draggable.handle = ".draghandle";
 }]);
 
 
@@ -94,6 +96,7 @@ ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", functio
     pk.showAddWidget = !pk.showAddWidget;
   };
 
+  // is true while waiting for server when saving
   pk.saving = false;
 
   // save board. If new, post, if existing, put
@@ -105,9 +108,7 @@ ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", functio
         pk.saving = false;
       });
     } else {
-      console.log(pk.board);
       pk.board.$save(function(newBoard) {
-        console.log("post");
         pk.board = newBoard;
         pk.saving = false;
         $state.go("board", {slug: newBoard.slug} );
@@ -127,17 +128,15 @@ ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", functio
     pk.showAddWidget = false;
   };
 
-  pk.widgetToEdit = {
-    content: "",
-  };
+  // Editing a widget
+  pk.widgetToEdit;
   pk.widgetEditIndex;
-
   pk.showEditWidget = false;
   pk.editWidget = function($event, widget) {
     pk.showEditWidget = !pk.showEditWidget;
     if (pk.showEditWidget) {
-      $('#edit-form').css("top", $event.pageY);
-      $('#edit-form').css("left", $event.pageX);
+      $('#edit-form').css("top", $event.pageY-30);
+      $('#edit-form').css("left", $event.pageX-10);
       var index = pk.board.widgets.indexOf(widget);
       pk.widgetEditIndex = index;
       pk.widgetToEdit = angular.copy(widget);
@@ -148,12 +147,13 @@ ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", functio
     pk.showEditWidget = !pk.showEditWidget;
   }
 
-
+  // pressing the save button
   pk.editFormSave = function() {
     pk.board.widgets[pk.widgetEditIndex] = pk.widgetToEdit;
     pk.showEditWidget = false;
   }
 
+  // delete a widget
   pk.deleteWidget = function(widget) {
     var index = pk.board.widgets.indexOf(widget);
     if(index != -1) {
@@ -164,15 +164,25 @@ ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", functio
 }]);
 
 ponk.directive("module", function($compile) {
+
+  var widgetcontrols = '<div class="widgetcontrols">' +
+              '<span class="glyphicon glyphicon-remove-circle pointer" ng-click="deleteWidget(widget)"></span>' +
+              '<span ng-click="editWidget($event, widget)" class="glyphicon glyphicon-pencil pointer"></span>' +
+              '<span class="glyphicon glyphicon-resize-horizontal draghandle pointer"></span>' +
+              '</div>';
+
   var youtubeLink = function(content) {
     var youtubesrc = 'src="http://www.youtube.com/embed/'+ content +'?autoplay=0"';
-    var youtubeTemplate = '<div>' + before + '<div class="module embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" type="text/html" ' + youtubesrc + ' allowfullscreen /></div></div>';
+    var youtubeTemplate = '<div>' + widgetcontrols + '<div class="module youtube ">' +
+                      '<div class="embed-responsive embed-responsive-16by9">' +
+                      '<iframe class="embed-responsive-item" type="text/html" ' + youtubesrc + ' allowfullscreen />' +
+                      '</div></div>' +
+                      '</div>';
     return youtubeTemplate;
   }
 
-  var before = '<div><span class="glyphicon glyphicon-remove-circle pointer" ng-click="deleteWidget(widget)"></span> <span ng-click="editWidget($event, widget)" class="glyphicon glyphicon-pencil pointer"></span>  <span class="glyphicon glyphicon-resize-horizontal pointer"></span></div>';
-  var textTemplate = '<div>' + before + '<div class="module">{{ widget.content }}</div></div>';
 
+  var textTemplate = '<div>' + widgetcontrols + '<div class="module">{{ widget.content }}</div></div>';
 
   var getTemplate = function(wType, content) {
 

@@ -7,7 +7,7 @@
   </div>
 </div>
 <div class="row">
-  <div class="col-xs-12 flex">
+  <div class="col-xs-12">
     <div class="sidebar" ng-class="{'sidebar-wide': pk.showAddWidget}">
 
         <span class="btn add-module glyphicon" ng-class="{'glyphicon-menu-left': pk.showAddWidget, 'glyphicon-menu-right': !pk.showAddWidget, }" ng-click="pk.toggleAddWidget()"></span>
@@ -39,7 +39,7 @@
           </form>
         </div>
 
-        <form id="edit-form" ng-show="pk.showEditWidget">
+        <form id="edit-form" ng-show="pk.showEditWidget" novalidate>
           <textarea name="content" class="form-control" ng-model="pk.widgetToEdit.content" value=""></textarea>
           <button name="abort" class="btn btn-warning" ng-click="pk.editFormAbort()">Avbryt</button><button name="button" class="btn btn-primary" ng-click="pk.editFormSave()">Spara</button>
         </form>

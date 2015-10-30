@@ -63,11 +63,12 @@ ponk.run(['gridsterConfig', function(gridsterConfig) {
   gridsterConfig.rowHeight = 40;
   gridsterConfig.defaultSizeY = 8;
   gridsterConfig.defaultSizeX = 5;
+//  gridsterConfig.draggable.handle = ".draghandle";
   gridsterConfig.floating = false;
   gridsterConfig.pushing = false;
   gridsterConfig.margins = [20, 20];
   gridsterConfig.resizable.handles = ['s', 'e', 'se'];
-  gridsterConfig.draggable.handle = ".draghandle";
+
 }]);
 
 
@@ -85,7 +86,7 @@ ponk.factory("boardFactory", ["$http", "$resource", function($http, $resource) {
   return $resource('/board/:slug', {slug:'@slug'}, {update: { method: "PUT"}});
 }]);
 
-ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", function($scope, board, boardFactory, $state) {
+ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", 'gridsterConfig', function($scope, board, boardFactory, $state, gridsterConfig) {
   var pk = this;
 
   pk.board = board;
@@ -166,9 +167,9 @@ ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", functio
 ponk.directive("module", function($compile) {
 
   var widgetcontrols = '<div class="widgetcontrols">' +
-              '<span class="glyphicon glyphicon-remove-circle pointer" ng-click="deleteWidget(widget)"></span>' +
+              '<span class="glyphicon glyphicon-remove pointer" ng-click="deleteWidget(widget)"></span>' +
               '<span ng-click="editWidget($event, widget)" class="glyphicon glyphicon-pencil pointer"></span>' +
-              '<span class="glyphicon glyphicon-resize-horizontal draghandle pointer"></span>' +
+              '<span class="glyphicon glyphicon-move draghandle pointer"></span>' +
               '</div>';
 
   var youtubeLink = function(content) {

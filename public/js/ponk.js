@@ -1,4 +1,4 @@
-var ponk = angular.module("ponk", ["ui.router", "ngResource", "gridster"]);
+var ponk = angular.module("ponk", ["ui.router", "gridster", "restangular"]);
 
 ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", function ($stateProvider, $urlRouterProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
@@ -23,11 +23,20 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
         controller: "AppCtrl",
         controllerAs: "pk",
         resolve: {
-          board: ["$stateParams", "boardFactory", function($stateParams, boardFactory) {
-            var board = new boardFactory();
-            board.widgets = [];
-            board.title = "Ny board";
-            return board;
+          board: ["$stateParams", "boardFactory", "Restangular", function($stateParams, boardFactory, Restangular) {
+            console.log("hej");
+              try {
+                var emptyBoard = {
+                  title: "",
+                  widgets: [],
+
+                }
+                var board = Restangular.restangularizeElement(null, emptyBoard, "board");
+              } catch(err) {
+                console.log(err);
+              }
+              console.log("kommer inte hit");
+              return board;
           }]
         }
       }
@@ -43,11 +52,10 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
         controllerAs: "pk",
         resolve: {
           board: ["$stateParams", "boardFactory", function($stateParams, boardFactory) {
-            var board = {widgets: []};
-            if($stateParams.slug) {
-              board = boardFactory.get({slug:$stateParams.slug}).$promise;
-            }
-            return board;
+            console.log("hej");
+            return boardFactory.one($stateParams.slug).get().then(function(board) {
+              return board;
+            });
           }]
         }
       }
@@ -55,6 +63,11 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
   });
 }]);
 
+ponk.config(function(RestangularProvider) {
+    RestangularProvider.setRestangularFields({
+      id: "slug"
+    });
+});
 
 // settings for gridster
 ponk.run(['gridsterConfig', function(gridsterConfig) {
@@ -75,21 +88,22 @@ ponk.run(['gridsterConfig', function(gridsterConfig) {
 ponk.controller("HomeCtrl", [function(){
   console.log("home");
   var hc = this;
-  hc.createNewBoard = function() {
-    console.log("ny board");
-    $state.go("empty");
-  };
+  // hc.createNewBoard = function() {
+  //   console.log("ny board");
+  //   $state.go("empty");
+  // };
 
 }]);
 
-ponk.factory("boardFactory", ["$http", "$resource", function($http, $resource) {
-  return $resource('/board/:slug', {slug:'@slug'}, {update: { method: "PUT"}});
+ponk.factory("boardFactory", ["Restangular", function(Restangular) {
+  return Restangular.service('board');
 }]);
 
-ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", 'gridsterConfig', function($scope, board, boardFactory, $state, gridsterConfig) {
+ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig', "board", "$timeout", function($scope, boardFactory, $state, gridsterConfig, board, $timeout) {
   var pk = this;
 
   pk.board = board;
+  console.log(pk.board);
 
   //Toggle add widget form
   pk.showAddWidget = false;
@@ -104,15 +118,21 @@ ponk.controller("AppCtrl", ["$scope", "board", "boardFactory", "$state", 'gridst
   pk.saveBoard = function() {
     pk.saving = true;
     if(pk.board.slug) {
-      console.log("put");
-      pk.board.$update(function(){
-        pk.saving = false;
+      console.log(pk.board);
+      pk.board.put().then(function() {
+        $timeout(function() {
+          pk.saving = false;
+        }, 1000);
+
       });
     } else {
-      pk.board.$save(function(newBoard) {
+      pk.board.post().then(function(newBoard) {
         pk.board = newBoard;
-        pk.saving = false;
+
         $state.go("board", {slug: newBoard.slug} );
+        $timeout(function() {
+          pk.saving = false;
+        }, 1000);
       });
     }
   };

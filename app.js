@@ -20,6 +20,7 @@ app.use(express.static(__dirname + "/public"));
 app.use('/vendor', express.static(__dirname + '/node_modules'));
 
 app.get('/board/:url', function(req, res) {
+  console.log("get " + req.params.url);
   Board.findOne({slug: req.params.url}, function(err, data) {
     if (err) {
       return res.status(400).send({
@@ -44,7 +45,6 @@ app.put('/board/:url', function(req, res) {
     console.log("ingen url");
   }
   var board = req.body;
-  console.log(req.body);
   delete board._id;
   delete board.slug;
 

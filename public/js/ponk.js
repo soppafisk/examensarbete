@@ -75,7 +75,7 @@ ponk.run(['gridsterConfig', function(gridsterConfig) {
   gridsterConfig.draggable.enabled = true;
   gridsterConfig.floating = false;
   gridsterConfig.pushing = false;
-  gridsterConfig.margins = [20, 20];
+  gridsterConfig.margins = [0, 0];
   gridsterConfig.resizable.handles = ['s', 'e', 'se'];
 
 }]);
@@ -94,25 +94,6 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
 
   pk.board = board;
 
-  $scope.$watch(angular.bind(this, function () {
-    return this;
-  }), function (newVal) {
-    console.log(newVal);
-  });
-//   this.gridster.$on('gridster-item-initialized', function(item) {
-//     console.log("test");
-//     // item.$element
-//     // item.gridster
-//     // item.row
-//     // item.col
-//     // item.sizeX
-//     // item.sizeY
-//     // item.minSizeX
-//     // item.minSizeY
-//     // item.maxSizeX
-//     // item.maxSizeY
-// })
-
   //Toggle add widget form
   pk.showAddWidget = false;
   pk.toggleAddWidget = function () {
@@ -126,7 +107,6 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
   pk.saveBoard = function() {
     pk.saving = true;
     if(pk.board.slug) {
-      console.log(pk.board);
       pk.board.put().then(function() {
         $timeout(function() {
           pk.saving = false;
@@ -196,6 +176,9 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
   pk.editFormSave = function() {
     pk.board.widgets[pk.widgetEditIndex] = pk.widgetToEdit;
     pk.showEditWidget = false;
+    $timeout(function() {
+      console.log("test");
+    },100);
   }
 
   // delete a widget

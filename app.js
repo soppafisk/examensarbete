@@ -20,7 +20,6 @@ app.use(express.static(__dirname + "/public"));
 app.use('/vendor', express.static(__dirname + '/node_modules'));
 
 app.get('/board/:url', function(req, res) {
-  console.log("get " + req.params.url);
   Board.findOne({slug: req.params.url}, function(err, data) {
     if (err) {
       return res.status(400).send({
@@ -37,6 +36,10 @@ app.get('/board/:url', function(req, res) {
     }
   });
 });
+
+var extractYoutubeId = function(url) {
+  var pattern = /.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/
+}
 
 // Save board
 app.put('/board/:url', function(req, res) {
@@ -59,12 +62,11 @@ app.put('/board/:url', function(req, res) {
 
 app.post('/board', function(req, res) {
   var data = req.body;
-  console.log(data);
   var board = new Board(data);
   board.save(function(err, newBoard) {
     if(err)
       console.log(err);
-    console.log(newBoard);
+
     res.json(newBoard);
   });
 });

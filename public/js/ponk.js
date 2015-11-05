@@ -4,6 +4,7 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
   $locationProvider.html5Mode(true);
   $urlRouterProvider.otherwise('/');
 
+  //Landning page
   $stateProvider.state('home', {
     url: '/',
     views: {
@@ -15,6 +16,7 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
     }
   });
 
+  // State for creating a new board
   $stateProvider.state('empty', {
     url: '/b/',
     views: {
@@ -23,19 +25,12 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
         controller: "AppCtrl",
         controllerAs: "pk",
         resolve: {
-          board: ["$stateParams", "boardFactory", "Restangular", function($stateParams, boardFactory, Restangular) {
-            console.log("hej");
-              try {
-                var emptyBoard = {
-                  title: "",
-                  widgets: [],
-
-                }
-                var board = Restangular.restangularizeElement(null, emptyBoard, "board");
-              } catch(err) {
-                console.log(err);
+          board: ["boardFactory", "Restangular", function(boardFactory, Restangular) {
+              var emptyBoard = {
+                title: "",
+                widgets: [],
               }
-              console.log("kommer inte hit");
+              var board = Restangular.restangularizeElement(null, emptyBoard, "board");
               return board;
           }]
         }
@@ -43,6 +38,7 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
     }
   });
 
+  // State for existing board
   $stateProvider.state('board', {
     url: '/b/:slug',
     views: {
@@ -52,7 +48,6 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
         controllerAs: "pk",
         resolve: {
           board: ["$stateParams", "boardFactory", function($stateParams, boardFactory) {
-            console.log("hej");
             return boardFactory.one($stateParams.slug).get().then(function(board) {
               return board;
             });
@@ -76,7 +71,8 @@ ponk.run(['gridsterConfig', function(gridsterConfig) {
   gridsterConfig.rowHeight = 40;
   gridsterConfig.defaultSizeY = 8;
   gridsterConfig.defaultSizeX = 5;
-//  gridsterConfig.draggable.handle = ".draghandle";
+  gridsterConfig.draggable.handle = ".draghandle";
+  gridsterConfig.draggable.enabled = true;
   gridsterConfig.floating = false;
   gridsterConfig.pushing = false;
   gridsterConfig.margins = [20, 20];
@@ -84,15 +80,9 @@ ponk.run(['gridsterConfig', function(gridsterConfig) {
 
 }]);
 
-
+/*  Landing page  */
 ponk.controller("HomeCtrl", [function(){
-  console.log("home");
   var hc = this;
-  // hc.createNewBoard = function() {
-  //   console.log("ny board");
-  //   $state.go("empty");
-  // };
-
 }]);
 
 ponk.factory("boardFactory", ["Restangular", function(Restangular) {
@@ -103,7 +93,25 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
   var pk = this;
 
   pk.board = board;
-  console.log(pk.board);
+
+  $scope.$watch(angular.bind(this, function () {
+    return this;
+  }), function (newVal) {
+    console.log(newVal);
+  });
+//   this.gridster.$on('gridster-item-initialized', function(item) {
+//     console.log("test");
+//     // item.$element
+//     // item.gridster
+//     // item.row
+//     // item.col
+//     // item.sizeX
+//     // item.sizeY
+//     // item.minSizeX
+//     // item.minSizeY
+//     // item.maxSizeX
+//     // item.maxSizeY
+// })
 
   //Toggle add widget form
   pk.showAddWidget = false;
@@ -137,6 +145,19 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
     }
   };
 
+  var extractYoutubeId = function(url) {
+    var pattern = /.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+    var yId = pattern.exec(url)[7];
+    var idPattern = /(\w){11}/;
+
+    if(!idPattern.test(yId)) {
+      var err = new Error("Fel i valideringen");
+    } else {
+      return yId;
+    }
+  }
+
+
   // new wigets has text preselected
   pk.newWidget = {
     wType: "text",
@@ -144,6 +165,9 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
   }
 
   pk.addWidget = function() {
+    if(pk.newWidget.wType === "youtube") {
+      pk.newWidget.content = extractYoutubeId(pk.newWidget.content);
+    }
     pk.board.widgets.push(pk.newWidget);
     pk.newWidget = { wType: "text", };
     pk.showAddWidget = false;
@@ -184,12 +208,16 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
 
 }]);
 
+/*
+  Switch content in widget depending on type
+*/
 ponk.directive("module", function($compile) {
 
+  /* controlbar */
   var widgetcontrols = '<div class="widgetcontrols">' +
               '<span class="glyphicon glyphicon-remove pointer" ng-click="deleteWidget(widget)"></span>' +
               '<span ng-click="editWidget($event, widget)" class="glyphicon glyphicon-pencil pointer"></span>' +
-              '<span class="glyphicon glyphicon-move draghandle pointer"></span>' +
+              '<span class="glyphicon glyphicon-move draghandle hand"></span>' +
               '</div>';
 
   var youtubeLink = function(content) {
@@ -202,6 +230,7 @@ ponk.directive("module", function($compile) {
     return youtubeTemplate;
   }
 
+  var imageTemplate = '<div>' + widgetcontrols + '<div class="module image"><img ng-src="{{ widget.content }}" /></div></div>';
 
   var textTemplate = '<div>' + widgetcontrols + '<div class="module">{{ widget.content }}</div></div>';
 
@@ -211,6 +240,9 @@ ponk.directive("module", function($compile) {
     switch(wType) {
       case "youtube":
         template = youtubeLink(content);
+        break;
+      case "image":
+        template = imageTemplate;
         break;
       case "text":
       default:

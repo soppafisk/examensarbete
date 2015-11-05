@@ -12,31 +12,41 @@
 
         <span class="btn add-module glyphicon" ng-class="{'glyphicon-menu-left': pk.showAddWidget, 'glyphicon-menu-right': !pk.showAddWidget, }" ng-click="pk.toggleAddWidget()"></span>
         <div ng-show="pk.showAddWidget">
-          <form action="" name="pk.add-widget-form" novalidate>
+
+          <form action="" name="addform" novalidate>
             <div  class="form-group">
-              <label for="widgetType"></label>
-              <select class="form-control" name="widgetType" ng-model="pk.newWidget.wType" required>
-                <option value="text" selected>Text</option>
-                <option value="youtube">Youtube</option>
-              </select>
-              <p ng-show="pk.add-widget-form.widgetType.$invalid && !pk.add-widget-form.widgetType.$pristine">Ej giltig</p>
+              <div class="radio-inline">
+                <label><input type="radio" name="widgetType" ng-model="pk.newWidget.wType" value="text" checked> Text</label>
+              </div>
+              <div class="radio-inline">
+                <label><input type="radio" name="widgetType" ng-model="pk.newWidget.wType" value="youtube"> Youtube</label>
+              </div>
+              <div class="radio-inline">
+                <label><input type="radio" name="widgetType" ng-model="pk.newWidget.wType" value="image"> Bild</label>
+              </div>
             </div>
 
             <div ng-switch="pk.newWidget.wType">
 
               <div ng-switch-when="youtube" class="form-group">
                 <label for="youtube">Youtube</label>
-                <input type="text" name="youtube" ng-model="pk.newWidget.content" class="form-control" >
+                <input type="text" name="youtube" ng-model="pk.newWidget.content" ng-pattern="/.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/" class="form-control" >
                 <p ng-show="pk.add-widget-form.youtube">{{ pk.add-widget-form.youtube }}</p>
+                <p ng-show="addform.youtube.$error.pattern && addform.youtube.$dirty">Inte en giltig youtubelänk</p>
               </div>
               <div ng-switch-when="text" class="form-group">
                 <label for="formText">Text</label>
                 <textarea ng-model="pk.newWidget.content" name="formText" class="form-control"></textarea>
               </div>
-
+              <div ng-switch-when="image" class="form-group">
+                <label for="image">URL till bild</label>
+                <input type="url" name="image" ng-model="pk.newWidget.content" class="form-control" >
+                <p ng-show="addform.image.$error.url && addform.image.$dirty">Inte en giltig URL</p>
+              </div>
             </div>
-            <button ng-click="pk.addWidget()" type="button" class="btn btn-default">Lägg till</button>
+            <button ng-click="pk.addWidget()" type="button" ng-disabled="!addform.$valid" class="btn btn-default">Lägg till</button>
           </form>
+
         </div>
 
         <form id="edit-form" ng-show="pk.showEditWidget" novalidate>
@@ -47,10 +57,10 @@
     </div>
     <div id="main-grid">
       <div class="row">
-        <div class="col-xs-12"  gridster>
+        <div class="col-xs-12" gridster>
           <ul>
             <li gridster-item="w" ng-repeat="w in pk.board.widgets">
-              <module  remove-fn="pk.deleteWidget(widget)" edit-fn="pk.editWidget($event, widget)" widget="w"></module>
+              <module remove-fn="pk.deleteWidget(widget)" edit-fn="pk.editWidget($event, widget)" widget="w"></module>
             </li>
           </ul>
         </div>

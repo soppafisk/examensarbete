@@ -6,6 +6,7 @@
     "angular": "^1.4.5",
     "angular-gridster": "^0.13.3",
     "angular-resource": "^1.4.7",
+    "angular-sanitize": "^1.4.7",
     "angular-ui-router": "^0.2.15",
     "body-parser": "^1.14.1",
     "bootstrap": "^3.3.5",

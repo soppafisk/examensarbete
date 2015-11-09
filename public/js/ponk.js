@@ -1,4 +1,4 @@
-var ponk = angular.module("ponk", ["ui.router", "gridster", "restangular"]);
+var ponk = angular.module("ponk", ["ui.router", "gridster", "restangular", "ngSanitize"]);
 
 ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", function ($stateProvider, $urlRouterProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
@@ -64,7 +64,7 @@ ponk.config(function(RestangularProvider) {
     });
 });
 
-// settings for gridster
+/* settings for gridster */
 ponk.run(['gridsterConfig', function(gridsterConfig) {
   gridsterConfig.columns = 30;
   gridsterConfig.width = 3000;
@@ -93,6 +93,15 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
   var pk = this;
 
   pk.board = board;
+
+  pk.updateBackground = function() {
+    if(pk.board.settings) {
+      pk.boardstyle = {
+        'background-color': pk.board.settings.background || "#78b087",
+      }
+    }
+  }
+  pk.updateBackground();
 
   //Toggle add widget form
   pk.showAddWidget = false;
@@ -150,7 +159,7 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
     }
     pk.board.widgets.push(pk.newWidget);
     pk.newWidget = { wType: "text", };
-    pk.showAddWidget = false;
+    //pk.showAddWidget = false;
   };
 
   // Editing a widget
@@ -191,6 +200,23 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
 
 }]);
 
+ponk.controller("SettingsCtrl", ["$scope", function($scope) {
+
+
+  var st = this;
+  st.colors = [
+    "#FFF",
+    "#78b087",
+    "#3e97d6",
+    "#d63e3e",
+    "#d6993e",
+  ];
+
+
+
+
+}]);
+
 /*
   Switch content in widget depending on type
 */
@@ -215,7 +241,7 @@ ponk.directive("module", function($compile) {
 
   var imageTemplate = '<div>' + widgetcontrols + '<div class="module image"><img ng-src="{{ widget.content }}" /></div></div>';
 
-  var textTemplate = '<div>' + widgetcontrols + '<div class="module">{{ widget.content }}</div></div>';
+  var textTemplate = '<div>' + widgetcontrols + '<div class="module" ng-bind-html="widget.content | linky"></div></div>';
 
   var getTemplate = function(wType, content) {
 

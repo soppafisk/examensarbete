@@ -4,13 +4,20 @@
     <!-- <button class="btn btn-primary">Bakgrund</button> -->
     <button class="btn btn-primary" ng-click="pk.saveBoard()">Spara</button>
     <span ng-show="pk.saving">Sparar...</span>
+    <span>{{ pk.board.title }}</span>
+
+    <button class="btn btn-default" ui-sref="empty">Ny ponk</button>
   </div>
 </div>
-<div class="row">
+<div class="row" ng-style="pk.boardstyle">
   <div class="col-xs-12">
-    <div class="sidebar" ng-class="{'sidebar-wide': pk.showAddWidget}">
+    <form id="edit-form" ng-show="pk.showEditWidget" novalidate>
+      <textarea name="content" class="form-control" ng-model="pk.widgetToEdit.content" value=""></textarea>
+      <button name="abort" class="btn btn-warning" ng-click="pk.editFormAbort()">Avbryt</button><button name="button" class="btn btn-primary" ng-click="pk.editFormSave()">Spara</button>
+    </form>
+    <div class="sidebar" ng-class="{'sidebar-wide': pk.showAddWidget}" ng-mouseenter="pk.toggleAddWidget()" ng-mouseleave="pk.toggleAddWidget()">
 
-        <span class="btn add-module glyphicon" ng-class="{'glyphicon-menu-left': pk.showAddWidget, 'glyphicon-menu-right': !pk.showAddWidget, }" ng-click="pk.toggleAddWidget()"></span>
+        <span class="btn add-module glyphicon" ng-class="{'glyphicon-menu-left': pk.showAddWidget, 'glyphicon-menu-right': !pk.showAddWidget, }"></span>
         <div ng-show="pk.showAddWidget">
 
           <form action="" name="addform" novalidate>
@@ -46,15 +53,11 @@
             </div>
             <button ng-click="pk.addWidget()" type="button" ng-disabled="!addform.$valid" class="btn btn-default">Lägg till</button>
           </form>
-
+          <div ng-include="'/views/settings.html'"></div>
         </div>
 
-        <form id="edit-form" ng-show="pk.showEditWidget" novalidate>
-          <textarea name="content" class="form-control" ng-model="pk.widgetToEdit.content" value=""></textarea>
-          <button name="abort" class="btn btn-warning" ng-click="pk.editFormAbort()">Avbryt</button><button name="button" class="btn btn-primary" ng-click="pk.editFormSave()">Spara</button>
-        </form>
+    </div> <!-- //.sidebar -->
 
-    </div>
     <div id="main-grid">
       <div class="row">
         <div class="col-xs-12" gridster>

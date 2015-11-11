@@ -1,12 +1,17 @@
 <div class="row">
   <div class="col-xs-12 navbar banner">
-    <span class="logo">Ponk</span>
-    <!-- <button class="btn btn-primary">Bakgrund</button> -->
-    <button class="btn btn-primary" ng-click="pk.saveBoard()">Spara</button>
-    <span ng-show="pk.saving">Sparar...</span>
-    <span>{{ pk.board.title }}</span>
-
-    <button class="btn btn-default" ui-sref="empty">Ny ponk</button>
+    <div class="col-xs-2">
+      <span class="logo">Ponk</span>
+    </div>
+    <div class="col-xs-1 col-xs-offset-1">
+      <input type="button" class="btn btn-primary" ng-click="pk.saveBoard()" value="{{ pk.saving ? 'Sparar...' : 'Spara' }}">
+    </div>
+    <div class="col-xs-2" id="board-title">
+      <span >{{ pk.board.title }}</span>
+    </div>
+    <div class="col-xs-1 col-xs-offset-5">
+      <input type="button" class="btn btn-default" ui-sref="empty" value="Ny ponk">
+    </div>
   </div>
 </div>
 <div class="row" ng-style="pk.boardstyle">

@@ -26,6 +26,54 @@ body {
   text-align: center;
 }
 
+ul {
+  list-style: none;
+}
+
+ul li {
+  display: inline-block;
+}
+
+ul li ul {
+  display: none;
+  background: white;
+  padding: 10px;
+  position: absolute;
+  z-index: 500;
+  border-radius: 0 5px 5px 5px;
+  -webkit-box-shadow: 5px 5px 15px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 5px 5px 15px 0px rgba(0,0,0,0.75);
+  box-shadow: 5px 5px 15px 0px rgba(0,0,0,0.75);
+}
+
+ul li:hover ul, ul li:focus ul {
+  display: block;
+}
+
+/* Settings */
+.cradio {
+  margin-right: 4px;
+
+}
+
+.colorPicker {
+  background: #aaa;
+}
+
+.cradio span {
+  height: 40px;
+  width: 40px;
+  border-radius: 5px;
+  border: 1px solid #555;
+  display: block;
+}
+
+.cradio input {
+  display: none;
+}
+
+
+
 /* Landing page */
 
 .home {
@@ -86,7 +134,7 @@ body {
   background: #eee;
 }
 
-.gridster ul li:hover .widgetcontrols {
+.gridster ul li:hover .widgetcontrols, .gridster ul li:focus .widgetcontrols {
   opacity: 1;
 }
 
@@ -145,24 +193,4 @@ body {
 
 .sidebar-wide {
   width: 25%;
-}
-.cradio {
-  margin-right: 4px;
-
-}
-
-.colorPicker {
-  background: #aaa;
-}
-
-.cradio span {
-  height: 40px;
-  width: 40px;
-  border-radius: 5px;
-  border: 1px solid #555;
-  display: block;
-}
-
-.cradio input {
-  display: none;
 }

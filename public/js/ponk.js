@@ -27,7 +27,7 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
         resolve: {
           board: ["boardFactory", "Restangular", function(boardFactory, Restangular) {
               var emptyBoard = {
-                title: "",
+                title: "Ny board",
                 widgets: [],
               }
               var board = Restangular.restangularizeElement(null, emptyBoard, "board");
@@ -38,7 +38,7 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
     }
   });
 
-  // State for existing board
+  /* State for existing board */
   $stateProvider.state('board', {
     url: '/b/:slug',
     views: {
@@ -103,16 +103,16 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
   }
   pk.updateBackground();
 
-  //Toggle add widget form
+  /* Toggle add widget form */
   pk.showAddWidget = false;
   pk.toggleAddWidget = function () {
     pk.showAddWidget = !pk.showAddWidget;
   };
 
-  // is true while waiting for server when saving
+  /* is true while waiting for server when saving */
   pk.saving = false;
 
-  // save board. If new, post, if existing, put
+  /* save board. If new/no slug, post, if existing, put */
   pk.saveBoard = function() {
     pk.saving = true;
     if(pk.board.slug) {
@@ -159,10 +159,9 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
     }
     pk.board.widgets.push(pk.newWidget);
     pk.newWidget = { wType: "text", };
-    //pk.showAddWidget = false;
   };
 
-  // Editing a widget
+  /* Editing a widget */
   pk.widgetToEdit;
   pk.widgetEditIndex;
   pk.showEditWidget = false;
@@ -181,7 +180,7 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
     pk.showEditWidget = !pk.showEditWidget;
   }
 
-  // pressing the save button
+  /* pressing the save button */
   pk.editFormSave = function() {
     pk.board.widgets[pk.widgetEditIndex] = pk.widgetToEdit;
     pk.showEditWidget = false;
@@ -206,14 +205,15 @@ ponk.controller("SettingsCtrl", ["$scope", function($scope) {
   var st = this;
   st.colors = [
     "#FFF",
+    "#111111",
     "#78b087",
     "#3e97d6",
     "#d63e3e",
     "#d6993e",
+    "#78a4b0",
+    "#ba7136",
+    "#4f2ad4",
   ];
-
-
-
 
 }]);
 

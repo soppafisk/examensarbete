@@ -4,13 +4,23 @@
       <span class="logo">Ponk</span>
     </div>
     <div class="col-xs-1 col-xs-offset-1">
-      <input type="button" class="btn btn-primary" ng-click="pk.saveBoard()" value="{{ pk.saving ? 'Sparar...' : 'Spara' }}">
+      <a class="btn btn-primary" ng-click="pk.saveBoard()">{{ pk.saving ? 'Sparar...' : 'Spara' }}</a>
     </div>
-    <div class="col-xs-2" id="board-title">
+    <div class="col-xs-3" id="board-title">
       <span >{{ pk.board.title }}</span>
     </div>
-    <div class="col-xs-1 col-xs-offset-5">
-      <input type="button" class="btn btn-default" ui-sref="empty" value="Ny ponk">
+    <div class="col-xs-2 col-xs-offset-3">
+      <ul>
+        <li>
+          <a class="btn btn-default">Settings</a>
+          <ul>
+            <div ng-include="'/views/settings.html'"></div>
+          </ul>
+        </li>
+        <li>
+          <a class="btn btn-default" ui-sref="empty">Ny ponk</a>
+        </li>
+      </ul>
     </div>
   </div>
 </div>
@@ -58,7 +68,7 @@
             </div>
             <button ng-click="pk.addWidget()" type="button" ng-disabled="!addform.$valid" class="btn btn-default">Lägg till</button>
           </form>
-          <div ng-include="'/views/settings.html'"></div>
+
         </div>
 
     </div> <!-- //.sidebar -->

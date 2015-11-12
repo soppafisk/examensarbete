@@ -147,7 +147,7 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
   }
 
 
-  // new wigets has text preselected
+  /* new wigets has text preselected */
   pk.newWidget = {
     wType: "text",
     content: ""
@@ -189,7 +189,7 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
     },100);
   }
 
-  // delete a widget
+  /* delete a widget */
   pk.deleteWidget = function(widget) {
     var index = pk.board.widgets.indexOf(widget);
     if(index != -1) {

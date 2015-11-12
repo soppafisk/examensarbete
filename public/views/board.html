@@ -30,7 +30,7 @@
       <textarea name="content" class="form-control" ng-model="pk.widgetToEdit.content" value=""></textarea>
       <button name="abort" class="btn btn-warning" ng-click="pk.editFormAbort()">Avbryt</button><button name="button" class="btn btn-primary" ng-click="pk.editFormSave()">Spara</button>
     </form>
-    <div class="sidebar" ng-class="{'sidebar-wide': pk.showAddWidget}" ng-mouseenter="pk.toggleAddWidget()" ng-mouseleave="pk.toggleAddWidget()">
+    <div class="sidebar" ng-mouseenter="pk.toggleAddWidget()" ng-mouseleave="pk.toggleAddWidget()">
 
         <span class="btn add-module glyphicon" ng-class="{'glyphicon-menu-left': pk.showAddWidget, 'glyphicon-menu-right': !pk.showAddWidget, }"></span>
         <div ng-show="pk.showAddWidget">

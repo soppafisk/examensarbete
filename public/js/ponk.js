@@ -1,10 +1,10 @@
-var ponk = angular.module("ponk", ["ui.router", "gridster", "restangular", "ngSanitize"]);
+var ponk = angular.module("ponk", ["ui.router", "gridster", "restangular", "ngSanitize", "ui.bootstrap"]);
 
 ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", function ($stateProvider, $urlRouterProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
   $urlRouterProvider.otherwise('/');
 
-  //Landning page
+  /* Landning page */
   $stateProvider.state('home', {
     url: '/',
     views: {
@@ -16,7 +16,7 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
     }
   });
 
-  // State for creating a new board
+  /* State for creating a new board */
   $stateProvider.state('empty', {
     url: '/b/',
     views: {
@@ -146,19 +146,22 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
     }
   }
 
-
-  /* new wigets has text preselected */
-  pk.newWidget = {
+  var emptyWidget = {
     wType: "text",
-    content: ""
+    content: "",
+    youtubeURL: "",
+    imageURL: "",
   }
+  /* new wigets has text preselected */
+  pk.newWidget = emptyWidget;
 
   pk.addWidget = function() {
     if(pk.newWidget.wType === "youtube") {
-      pk.newWidget.content = extractYoutubeId(pk.newWidget.content);
+      pk.newWidget.youtubeURL = extractYoutubeId(pk.newWidget.youtubeURL);
     }
     pk.board.widgets.push(pk.newWidget);
-    pk.newWidget = { wType: "text", };
+    console.log(pk.board.widgets);
+    pk.newWidget = emptyWidget;
   };
 
   /* Editing a widget */
@@ -185,7 +188,6 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
     pk.board.widgets[pk.widgetEditIndex] = pk.widgetToEdit;
     pk.showEditWidget = false;
     $timeout(function() {
-      console.log("test");
     },100);
   }
 
@@ -239,7 +241,7 @@ ponk.directive("module", function($compile) {
     return youtubeTemplate;
   }
 
-  var imageTemplate = '<div>' + widgetcontrols + '<div class="module image"><img ng-src="{{ widget.content }}" /></div></div>';
+  var imageTemplate = '<div>' + widgetcontrols + '<div class="module image"><img ng-src="{{ widget.imageURL }}" /></div></div>';
 
   var textTemplate = '<div>' + widgetcontrols + '<div class="module" ng-bind-html="widget.content | linky"></div></div>';
 
@@ -262,7 +264,7 @@ ponk.directive("module", function($compile) {
   }
 
   var linker = function(scope, element, attrs) {
-    var el = $compile(getTemplate(scope.widget.wType, scope.widget.content))(scope);
+    var el = $compile(getTemplate(scope.widget.wType, scope.widget.youtubeURL))(scope);
     element.replaceWith(el);
 
     scope.editWidget = function($event, w) {

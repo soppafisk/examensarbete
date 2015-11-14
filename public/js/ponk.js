@@ -75,8 +75,12 @@ ponk.run(['gridsterConfig', function(gridsterConfig) {
   gridsterConfig.draggable.enabled = true;
   gridsterConfig.floating = false;
   gridsterConfig.pushing = false;
-  gridsterConfig.margins = [0, 0];
+  gridsterConfig.outerMargin = false;
+  gridsterConfig.margins = [10, 10];
   gridsterConfig.resizable.handles = ['s', 'e', 'se'];
+  gridsterConfig.minSizeY = 2;
+  gridsterConfig.minSizeX = 2;
+
 
 }]);
 
@@ -89,7 +93,7 @@ ponk.factory("boardFactory", ["Restangular", function(Restangular) {
   return Restangular.service('board');
 }]);
 
-ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig', "board", "$timeout", function($scope, boardFactory, $state, gridsterConfig, board, $timeout) {
+ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig', "board", "$timeout", "$uibModal", function($scope, boardFactory, $state, gridsterConfig, board, $timeout, $uibModal) {
   var pk = this;
 
   pk.board = board;
@@ -135,11 +139,17 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
   };
 
   var extractYoutubeId = function(url) {
+    /*pattern for complete URL */
     var pattern = /.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
     var yId = pattern.exec(url)[7];
-    var idPattern = /(\w){11}/;
+
+    /* pattern for youtube ID */
+    var idPattern = /([\w-_]){11}/;
 
     if(!idPattern.test(yId)) {
+      if(idPattern.test(url)) {
+        return url;
+      }
       var err = new Error("Fel i valideringen");
     } else {
       return yId;
@@ -153,7 +163,7 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
     imageURL: "",
   }
   /* new wigets has text preselected */
-  pk.newWidget = emptyWidget;
+  pk.newWidget = angular.copy(emptyWidget);
 
   pk.addWidget = function() {
     if(pk.newWidget.wType === "youtube") {
@@ -161,35 +171,28 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
     }
     pk.board.widgets.push(pk.newWidget);
     console.log(pk.board.widgets);
-    pk.newWidget = emptyWidget;
+    pk.newWidget = angular.copy(emptyWidget);
   };
 
-  /* Editing a widget */
-  pk.widgetToEdit;
-  pk.widgetEditIndex;
-  pk.showEditWidget = false;
-  pk.editWidget = function($event, widget) {
-    pk.showEditWidget = !pk.showEditWidget;
-    if (pk.showEditWidget) {
-      $('#edit-form').css("top", $event.pageY-30);
-      $('#edit-form').css("left", $event.pageX-10);
-      var index = pk.board.widgets.indexOf(widget);
-      pk.widgetEditIndex = index;
-      pk.widgetToEdit = angular.copy(widget);
-    }
-  }
+  pk.editWidget = function(widget) {
+    var index = pk.board.widgets.indexOf(widget);
+    var modalInstance = $uibModal.open({
+      animation: true,
+      templateUrl: 'editWidgetContent.html',
+      controller: 'EditCtrl',
+      resolve: {
+        widget: function () {
+          return angular.copy(pk.board.widgets[index]);
+        }
+      }
+    });
 
-  pk.editFormAbort = function() {
-    pk.showEditWidget = !pk.showEditWidget;
-  }
+    modalInstance.result.then(function (editedWidget) {
+      pk.board.widgets[index] = editedWidget;
+    }, function () {
 
-  /* pressing the save button */
-  pk.editFormSave = function() {
-    pk.board.widgets[pk.widgetEditIndex] = pk.widgetToEdit;
-    pk.showEditWidget = false;
-    $timeout(function() {
-    },100);
-  }
+    });
+  };
 
   /* delete a widget */
   pk.deleteWidget = function(widget) {
@@ -201,8 +204,21 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
 
 }]);
 
-ponk.controller("SettingsCtrl", ["$scope", function($scope) {
+ponk.controller("EditCtrl", ["$scope", "$uibModalInstance", "widget", function($scope, $uibModalInstance, widget) {
 
+  $scope.widget = widget;
+
+  $scope.ok = function () {
+    console.log($scope.widget);
+    $uibModalInstance.close($scope.widget);
+  };
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss('cancel');
+  };
+}]);
+
+ponk.controller("SettingsCtrl", ["$scope", function($scope) {
 
   var st = this;
   st.colors = [
@@ -227,7 +243,7 @@ ponk.directive("module", function($compile) {
   /* controlbar */
   var widgetcontrols = '<div class="widgetcontrols">' +
               '<span class="glyphicon glyphicon-remove pointer" ng-click="deleteWidget(widget)"></span>' +
-              '<span ng-click="editWidget($event, widget)" class="glyphicon glyphicon-pencil pointer"></span>' +
+              '<span ng-click="editWidget(widget)" class="glyphicon glyphicon-pencil pointer"></span>' +
               '<span class="glyphicon glyphicon-move draghandle hand"></span>' +
               '</div>';
 
@@ -267,8 +283,8 @@ ponk.directive("module", function($compile) {
     var el = $compile(getTemplate(scope.widget.wType, scope.widget.youtubeURL))(scope);
     element.replaceWith(el);
 
-    scope.editWidget = function($event, w) {
-      scope.editFn({$event: $event, widget:w});
+    scope.editWidget = function(w) {
+      scope.editFn({widget:w});
     }
 
     scope.deleteWidget = function(w){

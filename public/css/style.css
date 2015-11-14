@@ -72,8 +72,6 @@ ul li:hover ul, ul li:focus ul {
   display: none;
 }
 
-
-
 /* Landing page */
 
 .home {
@@ -162,16 +160,11 @@ ul li:hover ul, ul li:focus ul {
   box-shadow: 5px 5px 25px 11px rgba(0,0,0,0.75);
 }
 
-#edit-form textarea {
-  height: 400px;
-  resize: none;
-}
-
 /* Sidebar */
 
-.sidebar textarea {
-  height: 400px;
-  resize: none;
+textarea {
+  height: 400px !important;
+  resize: none !important;
 }
 
 .glyphicon input {

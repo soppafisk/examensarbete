@@ -26,10 +26,38 @@
 </div>
 <div class="row" ng-style="pk.boardstyle">
   <div class="col-xs-12">
-    <form id="edit-form" ng-show="pk.showEditWidget" novalidate>
-      <textarea name="content" class="form-control" ng-model="pk.widgetToEdit.content" value=""></textarea>
-      <button name="abort" class="btn btn-warning" ng-click="pk.editFormAbort()">Avbryt</button><button name="button" class="btn btn-primary" ng-click="pk.editFormSave()">Spara</button>
-    </form>
+
+
+    <script type="text/ng-template" id="editWidgetContent.html">
+      <div class="modal-header">
+          <h3 class="modal-title">Redigera</h3>
+      </div>
+      <div class="modal-body" class="edit-modal">
+        <form name="editform" novalidate>
+          <div ng-switch="widget.wType">
+            <div ng-switch-when="text" class="form-group">
+              <label for="formText">Text</label>
+              <textarea ng-model="widget.content" name="formText" class="form-control"></textarea>
+            </div>
+            <div ng-switch-when="youtube" class="form-group">
+              <label for="youtube">Youtube URL eller ID</label>
+              <input type="text" name="youtube" ng-model="widget.youtubeURL" ng-pattern="/(.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*)||([\w-_]){11}/" class="form-control" >
+              <p ng-show="editform.youtube.$error.pattern && editform.youtube.$dirty">Inte en giltig youtubelänk</p>
+            </div>
+            <div ng-switch-when="image" class="form-group">
+              <label for="image">URL till bild</label>
+              <input type="url" name="image" ng-model="widget.imageURL" class="form-control" >
+              <p ng-show="editform.image.$error.url && editform.image.$dirty">Inte en giltig URL</p>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+          <button class="btn btn-primary" type="button" ng-disabled="!editform.$valid"  ng-click="ok()">Spara</button>
+          <button class="btn btn-warning" type="button" ng-click="cancel()">Avbryt</button>
+      </div>
+
+    </script>
     <div class="sidebar" ng-mouseenter="pk.toggleAddWidget()" ng-mouseleave="pk.toggleAddWidget()">
 
         <span class="btn add-module glyphicon" ng-class="{'glyphicon-menu-left': pk.showAddWidget, 'glyphicon-menu-right': !pk.showAddWidget, }"></span>
@@ -42,8 +70,8 @@
                 <textarea ng-model="pk.newWidget.content" name="formText" class="form-control"></textarea>
               </uib-tab>
               <uib-tab heading="Youtube" select="pk.newWidget.wType = 'youtube'">
-                <label for="youtube">Youtube</label>
-                <input type="text" name="youtube" ng-model="pk.newWidget.youtubeURL" ng-pattern="/.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/" class="form-control" >
+                <label for="youtube">Youtube URL eller ID</label>
+                <input type="text" name="youtube" ng-model="pk.newWidget.youtubeURL" ng-pattern="/(.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*)||(/w-_){11}/" class="form-control" >
                 <p ng-show="pk.add-widget-form.youtube">{{ pk.add-widget-form.youtube }}</p>
                 <p ng-show="addform.youtube.$error.pattern && addform.youtube.$dirty">Inte en giltig youtubelänk</p>
               </uib-tab>
@@ -67,7 +95,7 @@
         <div class="col-xs-12" gridster>
           <ul>
             <li gridster-item="w" ng-repeat="w in pk.board.widgets">
-              <module remove-fn="pk.deleteWidget(widget)" edit-fn="pk.editWidget($event, widget)" widget="w"></module>
+              <module remove-fn="pk.deleteWidget(widget)" edit-fn="pk.editWidget(widget)" widget="w"></module>
             </li>
           </ul>
         </div>

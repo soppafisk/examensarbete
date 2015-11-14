@@ -67,10 +67,10 @@ ponk.config(function(RestangularProvider) {
 /* settings for gridster */
 ponk.run(['gridsterConfig', function(gridsterConfig) {
   gridsterConfig.columns = 30;
-  gridsterConfig.width = 3000;
-  gridsterConfig.rowHeight = 40;
-  gridsterConfig.defaultSizeY = 8;
-  gridsterConfig.defaultSizeX = 5;
+  gridsterConfig.width = 'auto';
+  gridsterConfig.rowHeight = 'match';
+  gridsterConfig.defaultSizeY = 5;
+  gridsterConfig.defaultSizeX = 9;
   gridsterConfig.draggable.handle = ".draghandle";
   gridsterConfig.draggable.enabled = true;
   gridsterConfig.floating = false;
@@ -82,6 +82,20 @@ ponk.run(['gridsterConfig', function(gridsterConfig) {
   gridsterConfig.minSizeX = 2;
 
 
+  // gridsterConfig.columns = 30;
+  // gridsterConfig.width = 3000;
+  // gridsterConfig.rowHeight = 40;
+  // gridsterConfig.defaultSizeY = 7;
+  // gridsterConfig.defaultSizeX = 5;
+  // gridsterConfig.draggable.handle = ".draghandle";
+  // gridsterConfig.draggable.enabled = true;
+  // gridsterConfig.floating = false;
+  // gridsterConfig.pushing = false;
+  // gridsterConfig.outerMargin = false;
+  // gridsterConfig.margins = [10, 10];
+  // gridsterConfig.resizable.handles = ['s', 'e', 'se'];
+  // gridsterConfig.minSizeY = 2;
+  // gridsterConfig.minSizeX = 2;
 }]);
 
 /*  Landing page  */
@@ -141,7 +155,14 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
   var extractYoutubeId = function(url) {
     /*pattern for complete URL */
     var pattern = /.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
-    var yId = pattern.exec(url)[7];
+    var matches = pattern.exec(url);
+
+    var yId;
+    if (matches !== null && matches[7]) {
+      yId = matches[7];
+    } else {
+      yId = url;
+    }
 
     /* pattern for youtube ID */
     var idPattern = /([\w-_]){11}/;
@@ -158,9 +179,9 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
 
   var emptyWidget = {
     wType: "text",
-    content: "",
-    youtubeURL: "",
-    imageURL: "",
+    content: null,
+    youtubeURL: null,
+    imageURL: null,
   }
   /* new wigets has text preselected */
   pk.newWidget = angular.copy(emptyWidget);
@@ -170,8 +191,8 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
       pk.newWidget.youtubeURL = extractYoutubeId(pk.newWidget.youtubeURL);
     }
     pk.board.widgets.push(pk.newWidget);
-    console.log(pk.board.widgets);
     pk.newWidget = angular.copy(emptyWidget);
+        console.log(pk.board.widgets);
   };
 
   pk.editWidget = function(widget) {
@@ -209,7 +230,6 @@ ponk.controller("EditCtrl", ["$scope", "$uibModalInstance", "widget", function($
   $scope.widget = widget;
 
   $scope.ok = function () {
-    console.log($scope.widget);
     $uibModalInstance.close($scope.widget);
   };
 

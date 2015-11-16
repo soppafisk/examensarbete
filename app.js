@@ -23,13 +23,11 @@ app.get('/board/:url', function(req, res) {
   Board.findOne({slug: req.params.url}, function(err, data) {
     if (err) {
       return res.status(400).send({
-        message: errorHandler.getErrorMessage(err)
+        message: "Något gick fel"
       });
     } else {
       if(!data) {
-        return res.status(404).send({
-          message: "Finns ingen board på denna url"
-        });
+        return res.status(404).send();
       }
       return res.json(data);
 
@@ -37,26 +35,24 @@ app.get('/board/:url', function(req, res) {
   });
 });
 
-var extractYoutubeId = function(url) {
-  var pattern = /.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/
-}
-
 // Save board
 app.put('/board/:url', function(req, res) {
 
-  if (req.params.url === "") {
-    console.log("ingen url");
-  }
   var board = req.body;
-  delete board._id;
-  delete board.slug;
+
+  if (board._id)
+    delete board._id;
+  if (board.slug)
+    delete board.slug;
 
   Board.findOneAndUpdate({slug: req.params.url}, board, {runValidators: true, new: true}, function(err, response) {
-    console.log("save");
-    res.json(response);
     if(err){
-      console.log(err);
+      return res.status(404).send({
+        message: "Något gick fel"
+      });
     }
+    console.log("put " + req.params.url);
+    return res.json(response);
   });
 });
 
@@ -64,10 +60,14 @@ app.post('/board', function(req, res) {
   var data = req.body;
   var board = new Board(data);
   board.save(function(err, newBoard) {
-    if(err)
+    if(err) {
       console.log(err);
-
-    res.json(newBoard);
+      return res.status(404).send({
+        message: "Något gick fel"
+      });
+    }
+    console.log("post " + newBoard.slug);
+    return res.json(newBoard);
   });
 });
 
@@ -76,14 +76,12 @@ app.get('/b/(:url)?', function (req, res) {
     root: __dirname + '/public/',
     dotfiles: 'deny',
     headers: {
-        'x-timestamp': Date.now(),
-        'x-sent': true
     }
   };
   res.sendFile('index.html', options);
 });
 
-var server = app.listen(3000, function () {
+var server = app.listen(80, function () {
   var host = server.address().address;
   var port = server.address().port;
 

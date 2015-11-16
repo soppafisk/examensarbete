@@ -16,6 +16,17 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
     }
   });
 
+  $stateProvider.state('404', {
+    url: '/404',
+    views: {
+      "": {
+        templateUrl: 'views/home.html',
+        controller: "HomeCtrl",
+        controllerAs: "hc",
+      }
+    }
+  });
+
   /* State for creating a new board */
   $stateProvider.state('empty', {
     url: '/b/',
@@ -27,7 +38,8 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
         resolve: {
           board: ["boardFactory", "Restangular", function(boardFactory, Restangular) {
               var emptyBoard = {
-                title: "Ny board",
+                title: "Ny ponk",
+                settings: {},
                 widgets: [],
               }
               var board = Restangular.restangularizeElement(null, emptyBoard, "board");
@@ -50,6 +62,10 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
           board: ["$stateParams", "boardFactory", function($stateParams, boardFactory) {
             return boardFactory.one($stateParams.slug).get().then(function(board) {
               return board;
+            }, function(err) {
+              console.log(err);
+              return;
+
             });
           }]
         }
@@ -81,22 +97,14 @@ ponk.run(['gridsterConfig', function(gridsterConfig) {
   gridsterConfig.minSizeY = 2;
   gridsterConfig.minSizeX = 2;
 
-
-  // gridsterConfig.columns = 30;
-  // gridsterConfig.width = 3000;
-  // gridsterConfig.rowHeight = 40;
-  // gridsterConfig.defaultSizeY = 7;
-  // gridsterConfig.defaultSizeX = 5;
-  // gridsterConfig.draggable.handle = ".draghandle";
-  // gridsterConfig.draggable.enabled = true;
-  // gridsterConfig.floating = false;
-  // gridsterConfig.pushing = false;
-  // gridsterConfig.outerMargin = false;
-  // gridsterConfig.margins = [10, 10];
-  // gridsterConfig.resizable.handles = ['s', 'e', 'se'];
-  // gridsterConfig.minSizeY = 2;
-  // gridsterConfig.minSizeX = 2;
 }]);
+
+ponk.run( function ($http, $state, $rootScope) {
+    $rootScope.$on('$stateChangeError', function (event, toState, toParams, fromState, fromParams, error) {
+        $state.get('error').error = error;
+        return $state.go('error');
+    });
+});
 
 /*  Landing page  */
 ponk.controller("HomeCtrl", [function(){
@@ -115,7 +123,7 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
   pk.updateBackground = function() {
     if(pk.board.settings) {
       pk.boardstyle = {
-        'background-color': pk.board.settings.background || "#78b087",
+        'background-color': pk.board.settings.background || "#4DB6FF",
       }
     }
   }
@@ -240,17 +248,20 @@ ponk.controller("EditCtrl", ["$scope", "$uibModalInstance", "widget", function($
 
 ponk.controller("SettingsCtrl", ["$scope", function($scope) {
 
+  console.log($scope);
+
   var st = this;
   st.colors = [
     "#FFF",
-    "#111111",
-    "#78b087",
-    "#3e97d6",
-    "#d63e3e",
-    "#d6993e",
-    "#78a4b0",
-    "#ba7136",
-    "#4f2ad4",
+    "#222",
+    "#aaa",
+    "#5bc0eb",
+    "#fde74c",
+    "#9bc53d",
+    "#e55934",
+    "#fa7921",
+    "#1D3557",
+    "#E63946",
   ];
 
 }]);

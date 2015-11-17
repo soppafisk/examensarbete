@@ -11,14 +11,28 @@ var boardSchema = new Schema({
     content: String,
     youtubeURL: {
       type: String,
+      validate: {
+        validator: function(v) {
+          if (v !== null || v === "" )
+            return /^[\w-_]{11}$/.test(v);
+          return true
+        },
+        message: "Inte ett giltigt youtubeID"
+      }
     },
     imageURL: {
       type: String,
+      validate: {
+        validator: function(v) {
+        },
+        message: "Inte ett giltigt url"
+      }
     },
     sizeX: Number,
     sizeY: Number,
     col: Number,
-    row: Number}],
+    row: Number
+  }],
   settings: {
     background: {
       type: String,

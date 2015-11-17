@@ -7,10 +7,13 @@
       <span id="board-title">{{ pk.board.title }}</span>
 
     </div>
-    <div class="col-xs-3" >
-<a class="btn btn-primary btn-lg" ng-click="pk.saveBoard()">{{ pk.saving ? 'Sparar...' : 'Spara' }}</a>
+    <div class="col-xs-1" >
+      <a class="btn btn-primary btn-lg" ng-click="pk.saveBoard()" ng-class="{'btn-warning': !pk.isSaved}">{{ pk.saving ? 'Sparar...' : 'Spara' }}</a>
     </div>
-    <div class="col-xs-2 col-xs-offset-3">
+    <div class="col-xs-4" >
+      <uib-alert ng-repeat="alert in pk.alerts" type="{{alert.type}}" close="pk.closeAlert($index)">{{alert.msg}}</uib-alert>
+    </div>
+    <div class="col-xs-2 col-xs-offset-1">
       <ul>
         <li>
           <a class="btn btn-default">Settings</a>

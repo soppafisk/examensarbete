@@ -47,11 +47,12 @@ app.put('/board/:url', function(req, res) {
 
   Board.findOneAndUpdate({slug: req.params.url}, board, {runValidators: true, new: true}, function(err, response) {
     if(err){
-      return res.status(404).send({
-        message: "Något gick fel"
+      return res.status(400).send({
+        message: "Något gick fel. Din ponk är inte sparad"
       });
     }
     console.log("put " + req.params.url);
+    console.log(response.widgets);
     return res.json(response);
   });
 });
@@ -62,8 +63,8 @@ app.post('/board', function(req, res) {
   board.save(function(err, newBoard) {
     if(err) {
       console.log(err);
-      return res.status(404).send({
-        message: "Något gick fel"
+      return res.status(400).send({
+        message: "Något gick fel. Din ponk är inte sparad"
       });
     }
     console.log("post " + newBoard.slug);

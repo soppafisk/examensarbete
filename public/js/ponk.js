@@ -92,7 +92,7 @@ ponk.run(['gridsterConfig', function(gridsterConfig) {
   gridsterConfig.floating = false;
   gridsterConfig.pushing = false;
   gridsterConfig.outerMargin = false;
-  gridsterConfig.margins = [10, 10];
+  gridsterConfig.margins = [15, 15];
   gridsterConfig.resizable.handles = ['s', 'e', 'se'];
   gridsterConfig.minSizeY = 2;
   gridsterConfig.minSizeX = 2;
@@ -120,6 +120,8 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
 
   pk.board = board;
 
+
+
   pk.updateBackground = function() {
     if(pk.board.settings) {
       pk.boardstyle = {
@@ -135,8 +137,16 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
     pk.showAddWidget = !pk.showAddWidget;
   };
 
+  /* */
+  pk.alerts = [];
+  pk.closeAlert = function(index) {
+    pk.alerts.splice(index, 1);
+  };
+
   /* is true while waiting for server when saving */
   pk.saving = false;
+  /* false if widgets are changed */
+  pk.isSaved = true;
 
   /* save board. If new/no slug, post, if existing, put */
   pk.saveBoard = function() {
@@ -145,8 +155,13 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
       pk.board.put().then(function() {
         $timeout(function() {
           pk.saving = false;
-        }, 1000);
+          pk.isSaved = true;
+        }, 700);
 
+      }, function(err){
+        pk.alerts.push({ type: 'danger', msg: err.data.message });
+        pk.saving = false;
+        pk.isSaved = false;
       });
     } else {
       pk.board.post().then(function(newBoard) {
@@ -154,8 +169,13 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
 
         $state.go("board", {slug: newBoard.slug} );
         $timeout(function() {
+          pk.isSaved = true;
           pk.saving = false;
-        }, 1000);
+        }, 700);
+      }, function(err) {
+        pk.alerts.push({ type: 'danger', msg: err.data.message });
+        pk.saving = false;
+        pk.isSaved = false;
       });
     }
   };
@@ -200,7 +220,7 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
     }
     pk.board.widgets.push(pk.newWidget);
     pk.newWidget = angular.copy(emptyWidget);
-        console.log(pk.board.widgets);
+    pk.isSaved = false;
   };
 
   pk.editWidget = function(widget) {
@@ -218,6 +238,7 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
 
     modalInstance.result.then(function (editedWidget) {
       pk.board.widgets[index] = editedWidget;
+      pk.isSaved = false;
     }, function () {
 
     });
@@ -228,6 +249,7 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
     var index = pk.board.widgets.indexOf(widget);
     if(index != -1) {
       pk.board.widgets.splice(index, 1);
+      pk.isSaved = false;
     }
   };
 
@@ -239,6 +261,7 @@ ponk.controller("EditCtrl", ["$scope", "$uibModalInstance", "widget", function($
 
   $scope.ok = function () {
     $uibModalInstance.close($scope.widget);
+    pk.isSaved = false;
   };
 
   $scope.cancel = function () {
@@ -247,8 +270,6 @@ ponk.controller("EditCtrl", ["$scope", "$uibModalInstance", "widget", function($
 }]);
 
 ponk.controller("SettingsCtrl", ["$scope", function($scope) {
-
-  console.log($scope);
 
   var st = this;
   st.colors = [

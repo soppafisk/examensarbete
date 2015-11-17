@@ -1,11 +1,15 @@
 body {
   overflow-y: scroll;
-  background: #78b087;
+  background: #fff;
   height: 100vh;
 }
 
 .pointer {
   cursor: pointer;
+}
+
+.text {
+  cursor: text;
 }
 
 .hand {
@@ -201,4 +205,9 @@ textarea {
 
 .sidebar:hover {
   width: 25%;
+}
+
+.sidebar form button {
+  float: right;
+  margin-top: 10px;
 }

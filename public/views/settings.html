@@ -1,10 +1,5 @@
 <div ng-controller="SettingsCtrl as st">
   <form>
-    <div class="form-group">
-      <label for="boardtitle">Titel</label>
-      <input type="text" name="boardtitle" ng-model="pk.board.title" class="form-control">
-    </div>
-    Bakgrund
     <div class="colorPicker">
       <label ng-repeat="color in st.colors" class="cradio"><input type="radio" value="{{color}}" ng-model="pk.board.settings.background" ng-change="pk.updateBackground()"><span style="background-color: {{ color }};">&nbsp;</span></label>
     </div>

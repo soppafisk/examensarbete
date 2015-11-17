@@ -39,7 +39,9 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
           board: ["boardFactory", "Restangular", function(boardFactory, Restangular) {
               var emptyBoard = {
                 title: "Ny ponk",
-                settings: {},
+                settings: {
+                  background: "#5bc0eb",
+                },
                 widgets: [],
               }
               var board = Restangular.restangularizeElement(null, emptyBoard, "board");
@@ -59,13 +61,19 @@ ponk.config(['$stateProvider', '$urlRouterProvider', "$locationProvider", functi
         controller: "AppCtrl",
         controllerAs: "pk",
         resolve: {
-          board: ["$stateParams", "boardFactory", function($stateParams, boardFactory) {
+          board: ["$stateParams", "boardFactory", "Restangular", function($stateParams, boardFactory, Restangular) {
             return boardFactory.one($stateParams.slug).get().then(function(board) {
               return board;
             }, function(err) {
-              console.log(err);
-              return;
-
+              var emptyBoard = {
+                title: "Ny ponk",
+                settings: {
+                  background: "#5bc0eb",
+                },
+                widgets: [],
+              }
+              var board = Restangular.restangularizeElement(null, emptyBoard, "board");
+              return board;
             });
           }]
         }
@@ -120,16 +128,38 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
 
   pk.board = board;
 
-
-
   pk.updateBackground = function() {
     if(pk.board.settings) {
       pk.boardstyle = {
-        'background-color': pk.board.settings.background || "#4DB6FF",
+        'background-color': pk.board.settings.background || "#5bc0eb",
       }
     }
   }
   pk.updateBackground();
+
+  pk.editTitle = function(title) {
+    var old = title;
+    var modalInstance = $uibModal.open({
+      animation: true,
+      templateUrl: 'editTitle.html',
+      scope: $scope
+    });
+
+    modalInstance.result.then(function (title) {
+      pk.isSaved = false;
+    }, function () {
+      pk.board.title = old;
+    });
+
+    pk.titleOk = function () {
+      modalInstance.close(title);
+      pk.isSaved = false;
+    };
+
+    pk.titleCancel = function () {
+      modalInstance.dismiss('cancel');
+    };
+  };
 
   /* Toggle add widget form */
   pk.showAddWidget = false;
@@ -255,6 +285,8 @@ ponk.controller("AppCtrl", ["$scope", "boardFactory", "$state", 'gridsterConfig'
 
 }]);
 
+
+/* controller for edit widget modal window */
 ponk.controller("EditCtrl", ["$scope", "$uibModalInstance", "widget", function($scope, $uibModalInstance, widget) {
 
   $scope.widget = widget;

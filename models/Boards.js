@@ -13,7 +13,7 @@ var boardSchema = new Schema({
       type: String,
       validate: {
         validator: function(v) {
-          if (v !== null || v === "" )
+          if (v !== null & v !== "" )
             return /^[\w-_]{11}$/.test(v);
           return true
         },
@@ -25,7 +25,7 @@ var boardSchema = new Schema({
       validate: {
         validator: function(v) {
         },
-        message: "Inte ett giltigt url"
+        message: "Inte en giltig url"
       }
     },
     sizeX: Number,
